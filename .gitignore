@@ -1,10 +1,10 @@
-!build/.gitkeep
 build/*
-!download/.gitkeep
+!build/.gitkeep
 download/*
-!host/.gitkeep
+!download/.gitkeep
 host/*
-!install_dir/.gitkeep
+!host/.gitkeep
 install_dir/*
-!output/.gitkeep
+!install_dir/.gitkeep
 output/*
+!output/.gitkeep
