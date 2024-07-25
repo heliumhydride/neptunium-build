@@ -1,0 +1,5 @@
+build/*
+download/*
+host/*
+install_dir/*
+output/*
