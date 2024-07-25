@@ -1,5 +1,10 @@
+!build/.gitkeep
 build/*
+!download/.gitkeep
 download/*
+!host/.gitkeep
 host/*
+!install_dir/.gitkeep
 install_dir/*
+!output/.gitkeep
 output/*
