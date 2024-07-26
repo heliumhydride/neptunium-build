@@ -1,6 +1,6 @@
 <a href=#><img src=https://raw.githubusercontent.com/heliumhydride/neptunium-build/master/misc/pics/neptunium32.png width=80 align=left></a>
 # Neptunium
-A handy develoment environment for Windows 7+
+A handy development environment for Windows 7+
 
 ## Using Neptunium
 ### System requirements
@@ -17,6 +17,7 @@ A handy develoment environment for Windows 7+
 - A Unix-like environment like Linux, MSYS2, FreeBSD, w64devkit, ... (Or Neptunium itself lol)
 - GNU make
 - p7zip, tar, gzip, xz, unzip
+- A mingw toolchain (gcc or llvm)
 
 ### The building process
 - Clone this repository:
