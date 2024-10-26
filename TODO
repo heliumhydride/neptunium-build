@@ -1,7 +1,6 @@
 dl_build_install.sh:
   add quotes arround "$BUILD_JOBS"
   double check every path
-log files or verbose mode (and print current action)
 neptunium base files release
 test build for amd64
 general code cleanup

@@ -70,7 +70,7 @@ while :; do
     --dl-agent) shift; DOWNLOAD_AGENT="$1";;
     --free) FREE_SOFTWARE_ONLY=1;;
     -o|--output-log) shift; LOG_FILE="$1";;
-    -v|--verbose) LOG_FILE='';;
+    -v|--verbose) LOG_FILE="/dev/stdout";;
     -c|--clean) _clean_mode=1;;
     --) shift; break;;
     '') break;;
@@ -79,14 +79,14 @@ while :; do
   shift
 done
 
-if [ "$_clean_mode" = 1 ]; then
+[ "$_clean_mode" = 1 ] && {
   info "cleaning all inside build directory and downloads"
   clean_fail=0
   rm -rv "${NP_BUILDDIR}build"/* || warn "something wrong happened while cleaning build files"; _clean_fail=1
   rm -rv "${NP_BUILDDIR}download"/* || warn "something wrong happened while cleaning downloads"; _clean_fail=1
   rm -rv "${NP_BUILDDIR}output"/* || warn "something wrong happened while cleaning output zips" _clean_fail=1
   exit "$clean_fail"
-fi
+}
 
 check_installed "$DOWNLOAD_AGENT"
 check_installed tar
@@ -186,90 +186,90 @@ mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
 
 # --- COMPILING HOST LIBS ---
 info "building pdcurses"
-build_pdcurses
+build_pdcurses > "$LOG_FILE" 2>&1
 info "installing pdcurses"
-install_pdcurses
+install_pdcurses > "$LOG_FILE" 2>&1
 info "building host-libressl"
-build_host_libressl
+build_host_libressl > "$LOG_FILE" 2>&1
 info "installing host-libressl"
-install_host_libressl
+install_host_libressl > "$LOG_FILE" 2>&1
 info "building libgnurx"
-build_libgnurx
+build_libgnurx > "$LOG_FILE" 2>&1
 info "installing host-libgnurx"
-install_host_libgnurx
+install_host_libgnurx > "$LOG_FILE" 2>&1
 
 # --- COMPILING NEPTUNUM DISTRIBUTION ---
 info "building busybox-w32"
-build_busybox_w32
+build_busybox_w32 > "$LOG_FILE" 2>&1
 info "building libarchive"
-build_libarchive
+build_libarchive > "$LOG_FILE" 2>&1
 info "building libressl"
-build_libressl
+build_libressl > "$LOG_FILE" 2>&1
 info "building curl"
-build_curl
+build_curl > "$LOG_FILE" 2>&1
 info "building file"
-build_file
+build_file > "$LOG_FILE" 2>&1
 #info "building conemu"
 #build_conemu
 info "building nasm"
-build_nasm
+build_nasm > "$LOG_FILE" 2>&1
 info "building gmake"
-build_gmake
+build_gmake > "$LOG_FILE" 2>&1
 info "building vim"
-build_vim
+build_vim > "$LOG_FILE" 2>&1
 info "building pkg-config from w64devkit"
-build_pkg_config
+build_pkg_config > "$LOG_FILE" 2>&1
 info "building vc++filt from w64devkit"
-build_vcppfilt
+build_vcppfilt > "$LOG_FILE" 2>&1
 info "building debugbreak from w64devkit"
-build_debugbreak
+build_debugbreak > "$LOG_FILE" 2>&1
 info "building busybox alias from w64devkit"
-build_busybox_alias
+build_busybox_alias > "$LOG_FILE" 2>&1
 #info "building x64dbg"
 #build_x64dbg
 [ "$BUILD_LLVM" = 1 ] && {
   info "building llvm-mingw (takes a long time)"
-  build_llvm
+  build_llvm > "$LOG_FILE" 2>&1
 }
 
 # --- INSTALLING ---
 info "installing busybox-w32"
-install_busybox_w32
+install_busybox_w32 > "$LOG_FILE" 2>&1
 info "installing libarchive"
-install_libarchive
+install_libarchive > "$LOG_FILE" 2>&1
 info "installing libressl"
-install_libressl
+install_libressl > "$LOG_FILE" 2>&1
 info "installing curl"
-install_curl
+install_curl > "$LOG_FILE" 2>&1
 info "installing libgnurx"
-install_libgnurx
+install_libgnurx > "$LOG_FILE" 2>&1
 info "installing file"
-install_file
+install_file > "$LOG_FILE" 2>&1
 info "installing conemu"
-install_conemu
+install_conemu > "$LOG_FILE" 2>&1
 [ "$BUILD_LLVM" = 1 ] || {
   info "installing llvm-mingw"
-  install_llvm
+  install_llvm > "$LOG_FILE" 2>&1
 }
 info "installing nasm"
-install_nasm
+install_nasm > "$LOG_FILE" 2>&1
 info "installing gmake"
-install_gmake
+install_gmake > "$LOG_FILE" 2>&1
 info "installing vim"
-install_vim
+install_vim > "$LOG_FILE" 2>&1
 info "installing pkg-config from w64devkit"
-install_pkg_config
+install_pkg_config > "$LOG_FILE" 2>&1
 info "installing vc++filt from w64devkit"
-install_vcppfilt
+install_vcppfilt > "$LOG_FILE" 2>&1
 info "installing debugbreak from w64devkit"
-install_debugbreak
+install_debugbreak > "$LOG_FILE" 2>&1
 info "installing aliases to busybox"
-install_busybox_alias
+install_busybox_alias > "$LOG_FILE" 2>&1
 info "installing x64dbg"
-install_x64dbg
+install_x64dbg > "$LOG_FILE" 2>&1
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || {
   info "installing dependency walker"
-  install_depends
+  install_depends > "$LOG_FILE" 2>&1
 }
 
 info "creating distribution zip"
