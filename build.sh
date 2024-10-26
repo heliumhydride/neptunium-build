@@ -16,7 +16,7 @@ NP_BUILDDIR="$(dirname "$0")/"
 . "${NP_BUILDDIR}dl_build_install.sh"
 
 error() {
-  printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1"
+  printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1" >&2
   exit 1
 }
 
@@ -186,90 +186,90 @@ mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
 
 # --- COMPILING HOST LIBS ---
 info "building pdcurses"
-build_pdcurses > "$LOG_FILE" 2>&1
+build_pdcurses > "$LOG_FILE"
 info "installing pdcurses"
-install_pdcurses > "$LOG_FILE" 2>&1
+install_pdcurses > "$LOG_FILE"
 info "building host-libressl"
-build_host_libressl > "$LOG_FILE" 2>&1
+build_host_libressl > "$LOG_FILE"
 info "installing host-libressl"
-install_host_libressl > "$LOG_FILE" 2>&1
+install_host_libressl > "$LOG_FILE"
 info "building libgnurx"
-build_libgnurx > "$LOG_FILE" 2>&1
+build_libgnurx > "$LOG_FILE"
 info "installing host-libgnurx"
-install_host_libgnurx > "$LOG_FILE" 2>&1
+install_host_libgnurx > "$LOG_FILE"
 
 # --- COMPILING NEPTUNUM DISTRIBUTION ---
 info "building busybox-w32"
-build_busybox_w32 > "$LOG_FILE" 2>&1
+build_busybox_w32 > "$LOG_FILE"
 info "building libarchive"
-build_libarchive > "$LOG_FILE" 2>&1
+build_libarchive > "$LOG_FILE"
 info "building libressl"
-build_libressl > "$LOG_FILE" 2>&1
+build_libressl > "$LOG_FILE"
 info "building curl"
-build_curl > "$LOG_FILE" 2>&1
+build_curl > "$LOG_FILE"
 info "building file"
-build_file > "$LOG_FILE" 2>&1
+build_file > "$LOG_FILE"
 #info "building conemu"
 #build_conemu
 info "building nasm"
-build_nasm > "$LOG_FILE" 2>&1
+build_nasm > "$LOG_FILE"
 info "building gmake"
-build_gmake > "$LOG_FILE" 2>&1
+build_gmake > "$LOG_FILE"
 info "building vim"
-build_vim > "$LOG_FILE" 2>&1
+build_vim > "$LOG_FILE"
 info "building pkg-config from w64devkit"
-build_pkg_config > "$LOG_FILE" 2>&1
+build_pkg_config > "$LOG_FILE"
 info "building vc++filt from w64devkit"
-build_vcppfilt > "$LOG_FILE" 2>&1
+build_vcppfilt > "$LOG_FILE"
 info "building debugbreak from w64devkit"
-build_debugbreak > "$LOG_FILE" 2>&1
+build_debugbreak > "$LOG_FILE"
 info "building busybox alias from w64devkit"
-build_busybox_alias > "$LOG_FILE" 2>&1
+build_busybox_alias > "$LOG_FILE"
 #info "building x64dbg"
 #build_x64dbg
 [ "$BUILD_LLVM" = 1 ] && {
   info "building llvm-mingw (takes a long time)"
-  build_llvm > "$LOG_FILE" 2>&1
+  build_llvm > "$LOG_FILE"
 }
 
 # --- INSTALLING ---
 info "installing busybox-w32"
-install_busybox_w32 > "$LOG_FILE" 2>&1
+install_busybox_w32 > "$LOG_FILE"
 info "installing libarchive"
-install_libarchive > "$LOG_FILE" 2>&1
+install_libarchive > "$LOG_FILE"
 info "installing libressl"
-install_libressl > "$LOG_FILE" 2>&1
+install_libressl > "$LOG_FILE"
 info "installing curl"
-install_curl > "$LOG_FILE" 2>&1
+install_curl > "$LOG_FILE"
 info "installing libgnurx"
-install_libgnurx > "$LOG_FILE" 2>&1
+install_libgnurx > "$LOG_FILE"
 info "installing file"
-install_file > "$LOG_FILE" 2>&1
+install_file > "$LOG_FILE"
 info "installing conemu"
-install_conemu > "$LOG_FILE" 2>&1
+install_conemu > "$LOG_FILE"
 [ "$BUILD_LLVM" = 1 ] || {
   info "installing llvm-mingw"
-  install_llvm > "$LOG_FILE" 2>&1
+  install_llvm > "$LOG_FILE"
 }
 info "installing nasm"
-install_nasm > "$LOG_FILE" 2>&1
+install_nasm > "$LOG_FILE"
 info "installing gmake"
-install_gmake > "$LOG_FILE" 2>&1
+install_gmake > "$LOG_FILE"
 info "installing vim"
-install_vim > "$LOG_FILE" 2>&1
+install_vim > "$LOG_FILE"
 info "installing pkg-config from w64devkit"
-install_pkg_config > "$LOG_FILE" 2>&1
+install_pkg_config > "$LOG_FILE"
 info "installing vc++filt from w64devkit"
-install_vcppfilt > "$LOG_FILE" 2>&1
+install_vcppfilt > "$LOG_FILE"
 info "installing debugbreak from w64devkit"
-install_debugbreak > "$LOG_FILE" 2>&1
+install_debugbreak > "$LOG_FILE"
 info "installing aliases to busybox"
-install_busybox_alias > "$LOG_FILE" 2>&1
+install_busybox_alias > "$LOG_FILE"
 info "installing x64dbg"
-install_x64dbg > "$LOG_FILE" 2>&1
+install_x64dbg > "$LOG_FILE"
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || {
   info "installing dependency walker"
-  install_depends > "$LOG_FILE" 2>&1
+  install_depends > "$LOG_FILE"
 }
 
 info "creating distribution zip"
