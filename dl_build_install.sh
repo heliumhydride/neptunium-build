@@ -77,7 +77,7 @@ download_libarchive() {
 build_libarchive() {
   cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
   ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
-  make -j${BUILD_JOBS} || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
 }
 
 install_libarchive() {
@@ -276,7 +276,7 @@ download_nasm() {
 build_nasm() {
   cd "$NP_BUILDDIR"/build/nasm || error "directory error"
   ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" || error "build error"
-  make -j${BUILD_JOBS} || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
 }
 
 install_nasm() {
@@ -295,7 +295,7 @@ download_gmake() {
 build_gmake() {
   cd "$NP_BUILDDIR"/build/make || error "directory error"
   ./configure --disable-nls --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" || error "build error"
-  make -j${BUILD_JOBS} || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
 }
 
 install_gmake() {
@@ -325,7 +325,7 @@ build_vim() {
   VIMDLL=yes \
   WINVER=0x0601 \
   UNDER_CYGWIN=yes \
-  -j${BUILD_JOBS} || error "build error"
+  -j"$BUILD_JOBS" || error "build error"
 }
 
 install_vim() {
@@ -402,7 +402,7 @@ build_pdcurses() {
        AR=${TARGET_HOST}-ar \
        STRIP=${TARGET_HOST}-strip \
        WINDRES=${TARGET_HOST}-windres \
-       WIDE=Y DLL=Y UTF8=Y -j${BUILD_JOBS} || error "build error"
+       WIDE=Y DLL=Y UTF8=Y -j"$BUILD_JOBS" || error "build error"
 }
 
 install_pdcurses() {

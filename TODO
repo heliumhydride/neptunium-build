@@ -1,6 +1,4 @@
-dl_build_install.sh:
-  add quotes arround "$BUILD_JOBS"
-  double check every path
+dl_build_install.sh: double check every path
 neptunium base files release
 test build for amd64
 general code cleanup
