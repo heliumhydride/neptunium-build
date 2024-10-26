@@ -4,7 +4,7 @@ CONEMU_URL="https://github.com/Maximus5/ConEmu/archive/refs/tags/v23.07.24.tar.g
 NASM_URL="https://www.nasm.us/pub/nasm/stable/nasm-2.16.03.tar.xz"
 MAKE_URL="https://ftpmirror.gnu.org/make/make-4.4.1.tar.gz"
 BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5398-g89ae34445.tar.gz"
-VIM_URL="https://www.vim.org/downloads/vim-9.1.tar.bz2"
+VIM_URL="https://github.com/vim/vim/archive/v9.1.0660/vim-9.1.0660.tar.gz"
 FILE_URL="http://ftp.astron.com/pub/file/file-5.45.tar.gz"
 LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
 CURL_URL="https://curl.se/download/curl-8.8.0.tar.xz"
@@ -73,11 +73,13 @@ download_libarchive {
 }
 
 build_libarchive {
-
+  cd "$NP_BUILDDIR"/libarchive || exit 1
+  ./configure --host="$TARGET_HOST" --prefix=/"$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar
+  make -j${BUILD_JOBS}
 }
 
 install_libarchive {
-
+  make install DESTDIR="$NP_BUILDDIR"/install_dir
 }
 
 # Libressl (required for Curl)
@@ -222,23 +224,44 @@ install_gmake {
 
 # Vim
 download_vim {
-
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$VIM_URL" || error "downloading vim failed"
+  tar zxvf "$NP_BUILDDIR"/download/vim-*.tar.gz -C "$NP_BUILDDIR"/build
+  mv -v "$NP_BUILDDIR"/build/vim-* "$NP_BUILDDIR"/build/vim
 }
 
 build_vim {
-
+  cd "$NP_BUILDDIR"/build/vim/src || error "directory error"
+  make -f Make_ming.mak \
+  STATIC_STDCPLUS=yes \
+  FEATURES=HUGE \
+  GUI=yes \
+  OLE=yes \
+  NETBEANS=no \
+  CROSS_COMPILE=${TARGET_HOST}- \
+  CROSS=yes \
+  HAS_GCC_EH=no \
+  VIMDLL=yes \
+  WINVER=0x0601 \
+  UNDER_CYGWIN=yes \
+  -j${BUILD_JOBS}
 }
 
 install_vim {
-
+  cd "$NP_BUILDDIR"/build/vim/src
+  mkdir -pv "$NP_BUILDDIR"/install_dir/share/vim
+  cp -rv ../runtime "$NP_BUILDDIR"/install_dir/share/vim/
+  cp -v vimrun.exe gvim.exe vim.exe "$NP_BUILDDIR"/install_dir/share/vim/
+  cp -v xxd/xxd.exe "$NP_BUILDDIR"/install_dir/bin/
+  # the vi/vim/gvim launchers are already installed by neptunium-base-files
 }
 
 # pkg-config, vc++filt, debugbreak from w64devkit
 download_w64devkit {
-  cd "$NP_BUILDDIR"
+  cd "$NP_BUILDDIR"/download
   $_dl_cmd "$W64DEVKIT_URL"  || error "downloading w64devkit failed"
   tar zxvf "$NP_BUILDDIR"/download/w64devkit-*.tar.gz -C "$NP_BUILDDIR"/build
-  mv "$NP_BUILDDIR"/build/w64devkit-* "$NP_BUILDDIR"/build/w64devkit
+  mv -v "$NP_BUILDDIR"/build/w64devkit-* "$NP_BUILDDIR"/build/w64devkit
 }
 
 build_pkg_config {
@@ -274,15 +297,42 @@ install_debugbreak {
 
 # PDCurses
 download_pdcurses {
-
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$PDCURSES_URL" || exit 1
+  tar zxvf "$NP_BUILDDIR"/download/PDCurses-*.tar.gz -C "$NP_BUILDDIR"/build
+  mv -v "$NP_BUILDDIR"/build/PDCurses-* "$NP_BUILDDIR"/build/pdcurses
 }
 
 build_pdcurses {
-
+  cd "$NP_BUILDDIR"/build/pdcurses/wincon || exit 1
+  make CC=${TARGET_HOST}-gcc \
+       LINK=${TARGET_HOST}-gcc \
+       AR=${TARGET_HOST}-ar \
+       STRIP=${TARGET_HOST}-strip \
+       WINDRES=${TARGET_HOST}-windres \
+       WIDE=Y DLL=Y UTF8=Y -j${BUILD_JOBS}
 }
 
 install_pdcurses {
+  # PDCurses is both a dependency for building vim and a package for the final build, so we install both into the toolchain directory and into the base system
 
+  # cd "$NP_BUILDDIR"/build/pdcurses || exit 1
+  # base system install
+  cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
+  cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
+
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/pdcurses.a
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/curses.a
+
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/pdcurses.dll
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/curses.dll
+
+  # vim dependency
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
+
+  # host toolchain install
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/host/
 }
 
 # x64dbg
