@@ -166,6 +166,7 @@ info "creating base directory structure"
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/home
+mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
 
 # --- COMPILING HOST LIBS ---
 build_pdcurses
@@ -177,7 +178,7 @@ build_busybox_w32
 build_libarchive
 build_curl
 build_file
-build_conemu
+#build_conemu
 build_nasm
 build_gmake
 build_vim
