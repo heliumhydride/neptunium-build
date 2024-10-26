@@ -1,6 +1,5 @@
 #!/bin/sh
 
-CONEMU_URL="https://github.com/Maximus5/ConEmu/archive/refs/tags/v23.07.24.tar.gz"
 NASM_URL="https://www.nasm.us/pub/nasm/stable/nasm-2.16.03.tar.xz"
 MAKE_URL="https://ftpmirror.gnu.org/make/make-4.4.1.tar.gz"
 BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5398-g89ae34445.tar.gz"
@@ -20,6 +19,7 @@ LIBGNURX_URL="https://downloads.sourceforge.net/mingw/Other/UserContributed/rege
 DEPENDS_X86_URL="https://www.dependencywalker.com/depends22_x86.zip"
 DEPENDS_AMD64_URL="https://www.dependencywalker.com/depends22_x64.zip"
 
+CONEMU_URL="https://github.com/Maximus5/ConEmu/releases/download/v23.07.24/ConEmuPack.230724.7z"
 X64DBG_URL="https://downloads.sourceforge.net/project/x64dbg/snapshots/snapshot_2024-07-21_20-36.zip"
 
 LLVM_MINGW_SRC_URL="https://github.com/mstorsjo/llvm-mingw/archive/refs/tags/20240619.tar.gz"
@@ -146,16 +146,25 @@ install_file() {
 
 # ConEmu
 download_conemu() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  if [ -n "$CONEMU_CUSTOM_PATH" ]; then # if we use custom conemu.7z
+    cp -v "$CONEMU_CUSTOM_PATH" "$NP_BUILDDIR"/download/conemu.7z
+  else
+    $_dl_cmd "$CONEMU_CUSTOM_PATH" || exit 1
+    mv -v "$NP_BUILDDIR"/download/ConEmuPack.*.7z "$NP_BUILDDIR"/download/conemu.7z
+  fi
+  mkdir -v "$NP_BUILDDIR"/build/conemu
+  7z x "$NP_BUILDDIR"/download/conemu.7z -o"$NP_BUILDDIR"/build/conemu/
 }
 
-build_conemu() {
-  cd "$BP_BUILDDIR"/build/conemu/src
-  CROSS_HOST="${TARGET_HOST}-" make -j12 -f makefile_all_gcc WIDE=y
-}
+#build_conemu() {
+#  cd "$BP_BUILDDIR"/build/conemu/src
+#  CROSS_HOST="${TARGET_HOST}-" make -j12 -f makefile_all_gcc WIDE=y
+#}
 
 install_conemu() {
-  return 0 # TODO
+  mkdir -pv "$NP_BUILDDIR"/install_dir/share/conemu
+  cp -rv "$NP_BUILDDIR"/build/conemu/* "$NP_BUILDDIR"/install_dir/share/conemu/
 }
 
 # LLVM-MinGW (http://github.com/mstorsjo/llvm-mingw)
@@ -344,7 +353,7 @@ download_x64dbg() {
     cp -v "$X64DBG_CUSTOM_PATH" "$NP_BUILDDIR"/download/x64dbg.zip
   else
     $_dl_cmd "$MAKE_URL" || exit 1
-    mv -v "$NP_BUILDDIR"/build/snapshot-*.zip "$NP_BUILDDIR"/build/x64dbg.zip
+    mv -v "$NP_BUILDDIR"/download/snapshot-*.zip "$NP_BUILDDIR"/download/x64dbg.zip
   fi
   mkdir -v "$NP_BUILDDIR"/build/x64dbg
   unzip "$NP_BUILDDIR"/download/x64dbg.zip -d "$NP_BUILDDIR"/build/x64dbg/

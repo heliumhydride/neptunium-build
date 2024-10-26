@@ -48,6 +48,7 @@ print_usage() {
   echo "  -v, --verbose: output commands to stdout, not log file (overrides -o)"
   echo "  -o, --output-log [LOG_FILE]: output to log"
   echo "  --x64dbg [custom_zip]: Use a custom-built version of x64dbg (must be same directory structure as in the snapshots of x64dbg)"
+  echo "  --conemu [custom_7z]: Use a custom-built version of conemu (must be same directory structure as in the ConEmuPack.*.7z)"
   echo "  --no-prebuilt-llvm: Build llvm-mingw instead of pulling a binary (VERY LONG!)"
   echo "  --free: use FOSS tools only (no dependency walker)"
   echo "  --dl-agent [program]: use [program] to download files, default is curl (supported: curl,wget)"
@@ -65,6 +66,7 @@ while :; do
     -j|--jobs) shift; BUILD_JOBS=$1;;
     --no-prebuilt-llvm) BUILD_LLVM=1;;
     --x64dbg) shift; X64DBG_CUSTOM_PATH=$1;;
+    --conemu) shift; CONEMU_CUSTOM_PATH=$1;;
     --dl-agent) shift; DOWNLOAD_AGENT="$1";;
     --free) FREE_SOFTWARE_ONLY=1;;
     -o|--output-log) shift; LOG_FILE="$1";;
@@ -130,6 +132,7 @@ else echo "${ANSI_BLUE}free software only:     ${ANSI_RED}no${ANSI_NORM}"
 fi
 
 [ -n "$X64DBG_CUSTOM_PATH" ] && echo "${ANSI_BLUE}x64dbg custom zip path: ${ANSI_GREEN}${X64DBG_CUSTOM_PATH}${ANSI_NORM}"
+[ -n "$CONEMU_CUSTOM_PATH" ] && echo "${ANSI_BLUE}conemu custom zip path: ${ANSI_GREEN}${CONEMU_CUSTOM_PATH}${ANSI_NORM}"
 
 echo "Proceed with these parameters ? (Y/n)"
 read -r _proceed
