@@ -1,8 +1,18 @@
 dl_build_install.sh: double check every path
-neptunium base files release
 test build for amd64
 general code cleanup
-update download urls for packages (notably w64devkit to 2.0)
-build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
+neptunium base files release
+update download urls for packages:
+  w64devkit 2.0.0
+  busybox-w32 FRP-5467-g9376eebd8
+  libarchive 3.7.7
+  curl 8.10.1
+  libressl 4.0.0
+  x64dbg snapshot_2024-10-18_19-09
+  llvm-mingw 20241015 (llvm 19.1.2)
+  neptunium-base-files w/ release url instead of master head.tar.gz
+retest after upgraded pkgs
 test build for x86 and arm64
+build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
+test self build on amd64, x86, arm64
 add armv7 support
