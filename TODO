@@ -17,10 +17,7 @@ finish dl_build_install.sh commands
   build_file()
   install_file()
 
-  download_conemu()
-  build_conemu()    (not building on linux)
-  install_conemu()
-
+log files or verbose mode (and print current action)
 neptunium base files release
 update download urls for packages (notably w64devkit to 2.0)
 build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
