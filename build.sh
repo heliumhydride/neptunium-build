@@ -215,6 +215,8 @@ info "building vc++filt from w64devkit"
 build_vcppfilt
 info "building debugbreak from w64devkit"
 build_debugbreak
+info "building busybox alias from w64devkit"
+build_busybox_alias
 #info "building x64dbg"
 #build_x64dbg
 [ "$BUILD_LLVM" = 1 ] && {
@@ -255,6 +257,8 @@ info "installing vc++filt from w64devkit"
 install_vcppfilt
 info "installing debugbreak from w64devkit"
 install_debugbreak
+info "installing aliases to busybox"
+install_busybox_alias
 info "installing x64dbg"
 install_x64dbg
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || {

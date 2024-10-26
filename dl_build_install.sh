@@ -56,12 +56,12 @@ build_busybox_w32() {
     x86)   make mingw32_defconfig;;
     arm64) make mingw64a_defconfig;;
   esac
-  # patch config accordingly to neptunium64_config
+  # TODO patch config accordingly to neptunium64_config
   make -j${BUILD_JOBS}
 }
 
 install_busybox_w32() {
-  # build aliases.c from w64devkit
+  # busybox aliases installed from w64devkit busybox-alias.c
   cd "$NP_BUILDDIR"/build/busybox-w32 || error "directory error"
   cp busybox.exe -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || exit 1
 }
@@ -76,12 +76,14 @@ download_libarchive() {
 
 build_libarchive() {
   cd "$NP_BUILDDIR"/libarchive || exit 1
-  ./configure --host="$TARGET_HOST" --prefix=/"$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar
+  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar
   make -j${BUILD_JOBS}
 }
 
 install_libarchive() {
   make install DESTDIR="$NP_BUILDDIR"/install_dir
+  mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdtar.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/tar.exe
+  mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdcpio.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cpio.exe
 }
 
 # Libressl (required for Curl)
@@ -164,7 +166,7 @@ download_conemu() {
 
 install_conemu() {
   mkdir -pv "$NP_BUILDDIR"/install_dir/share/conemu
-  cp -rv "$NP_BUILDDIR"/build/conemu/* "$NP_BUILDDIR"/install_dir/share/conemu/
+  cp -rv "$NP_BUILDDIR"/build/conemu/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/conemu/
 }
 
 # LLVM-MinGW (http://github.com/mstorsjo/llvm-mingw)
@@ -187,11 +189,11 @@ download_llvm() {
 build_llvm() {
   cd "$NP_BUILDDIR"/llvm-mingw || error "directory error"
   # also installs llvm-mingw in the process, which is quite handy
-  ./build-all.sh --host="$TARGET_HOST" "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"
+  ./build-all.sh --host="$TARGET_HOST" "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/
 }
 
 install_llvm() {
-  cp -rv "$NP_BUILDDIR"/build/llvm-mingw/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"
+  cp -rv "$NP_BUILDDIR"/build/llvm-mingw/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/
 }
 
 # Netwide assembler
@@ -258,14 +260,14 @@ build_vim() {
 
 install_vim() {
   cd "$NP_BUILDDIR"/build/vim/src
-  mkdir -pv "$NP_BUILDDIR"/install_dir/share/vim
-  cp -rv ../runtime "$NP_BUILDDIR"/install_dir/share/vim/
-  cp -v vimrun.exe gvim.exe vim.exe "$NP_BUILDDIR"/install_dir/share/vim/
-  cp -v xxd/xxd.exe "$NP_BUILDDIR"/install_dir/bin/
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim
+  cp -rv ../runtime "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
+  cp -v vimrun.exe gvim.exe vim.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
+  cp -v xxd/xxd.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
   # the vi/vim/gvim launchers are already installed by neptunium-base-files
 }
 
-# pkg-config, vc++filt, debugbreak from w64devkit
+# pkg-config, vc++filt, debugbreak, busybox aliases from w64devkit
 download_w64devkit() {
   cd "$NP_BUILDDIR"/download
   $_dl_cmd "$W64DEVKIT_URL"  || error "downloading w64devkit failed"
@@ -285,11 +287,16 @@ build_vcppfilt() {
         -s -nostdlib -o vc++filt.exe vc++filt.c -lkernel32 -lshell32 -ldbghelp
 }
 
-
 build_debugbreak() {
   cd "$NP_BUILDDIR"/build/w64devkit/src || error "directory error"
   ${TARGET_HOST}-gcc -Os -fno-asynchronous-unwind-tables -Wl,--gc-sections -s -nostdlib \
         -o debugbreak.exe debugbreak.c -lkernel32
+}
+
+build_busybox_alias() {
+  cd "$NP_BUILDDIR"/build/w64devkit/src || error "directory error"
+  "${TARGET_HOST}-gcc" -Os -fno-asynchronous-unwind-tables -Wl,--gc-sections -s -nostdlib \
+        -o bbalias.exe busybox-alias.c -lkernel32
 }
 
 install_pkg_config() {
@@ -302,6 +309,12 @@ install_vcppfilt() {
 
 install_debugbreak() {
   cp -v "$NP_BUILDDIR"/build/w64devkit/src/debugbreak.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+}
+
+install_busybox_alias() {
+  for prog in "arch ascii ash awk base32 base64 basename bash bc bunzip2 bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync ftpget ftpput getopt grep groups gunzip gzip hd head hexdump httpd id inotifyd install ipcalc jn kill killall lash less link ln logname ls lsattr lzcat lzma lzop lzopcat man md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts tsort ttysize uname unexpand uniq unix2dos unlink unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat"; do
+    cp -v "$NP_BUILDDIR"/build/w64devkit/src/bbalias.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/"$prog".exe
+  done
 }
 
 # PDCurses
@@ -326,18 +339,21 @@ install_pdcurses() {
   # PDCurses is both a dependency for building vim and a package for the final build, so we install both into the toolchain directory and into the base system
 
   # cd "$NP_BUILDDIR"/build/pdcurses || exit 1
+  # make directories
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
   # base system install
   cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
   cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
 
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/pdcurses.a
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/curses.a
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libpdcurses.a
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libcurses.a
 
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/pdcurses.dll
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/curses.dll
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libpdcurses.dll
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libcurses.dll
 
-  # vim dependency
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
+  # vim dependency (needs to be copied as pdcurses.dll to be used)
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 
   # host toolchain install
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/
