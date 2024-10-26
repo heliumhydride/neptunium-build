@@ -163,6 +163,8 @@ info "downloading vim"
 download_vim
 info "downloading w64devkit (pkg-config, vc++filt, debugbreak)"
 download_w64devkit
+info "downloading libressl"
+download_libressl
 info "downloading/copying x64dbg"
 download_x64dbg
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || {
@@ -172,8 +174,6 @@ download_x64dbg
 # additional libs
 info "downloading pdcurses"
 download_pdcurses
-info "downloading host-libressl"
-download_host_libressl
 info "downloading host-libgnurx"
 download_host_libgnurx
 
@@ -187,16 +187,24 @@ mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
 # --- COMPILING HOST LIBS ---
 info "building pdcurses"
 build_pdcurses
+info "installing pdcurses"
+install_pdcurses
 info "building host-libressl"
 build_host_libressl
-info "building host-libgnurx"
-build_host_libgnurx
+info "installing host-libressl"
+install_host_libressl
+info "building libgnurx"
+build_libgnurx
+info "installing host-libgnurx"
+install_host_libgnurx
 
 # --- COMPILING NEPTUNUM DISTRIBUTION ---
 info "building busybox-w32"
 build_busybox_w32
 info "building libarchive"
 build_libarchive
+info "building libressl"
+build_libressl
 info "building curl"
 build_curl
 info "building file"
@@ -229,12 +237,12 @@ info "installing busybox-w32"
 install_busybox_w32
 info "installing libarchive"
 install_libarchive
-info "installing libressl libraries"
-install_libressl_libs
+info "installing libressl"
+install_libressl
 info "installing curl"
 install_curl
-info "installing libgnurx libraries"
-install_libgnurx_libs
+info "installing libgnurx"
+install_libgnurx
 info "installing file"
 install_file
 info "installing conemu"
@@ -247,8 +255,6 @@ info "installing nasm"
 install_nasm
 info "installing gmake"
 install_gmake
-info "installing pdcurses"
-install_pdcurses
 info "installing vim"
 install_vim
 info "installing pkg-config from w64devkit"

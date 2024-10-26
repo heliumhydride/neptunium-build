@@ -1,0 +1,11 @@
+--- src/readcdf.c.orig	2024-10-26 17:04:16.438352799 +0200
++++ src/readcdf.c	2024-10-26 17:04:50.407932574 +0200
+@@ -236,7 +236,7 @@
+ 				} else {
+ 					char *c, *ec;
+ 					cdf_timestamp_to_timespec(&ts, tp);
+-					c = cdf_ctime(&ts.tv_sec, tbuf);
++					c = cdf_ctime((time_t*)&ts.tv_sec, tbuf);
+ 					if (c != NULL &&
+ 					    (ec = strchr(c, '\n')) != NULL)
+ 						*ec = '\0';

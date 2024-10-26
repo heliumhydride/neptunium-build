@@ -1,25 +1,11 @@
-finish dl_build_install.sh commands
-  download_host_libressl()
-  build_host_libressl()
-  install_host_libressl()
-  install_libressl_libs() (combine with install_host_libressl like with pdcurses ?)
-
-  download_curl()
-  build_curl()
-  install_curl()
-
-  download_host_libgnurx()
-  build_host_libgnurx()
-  install_host_libgnurx()
-  install_libgnurx_libs() (combine with install_host_libgnurx ?)
-
-  download_file()
-  build_file()
-  install_file()
-
+dl_build_install.sh:
+  add quotes arround "$BUILD_JOBS"
+  double check every path
 log files or verbose mode (and print current action)
 neptunium base files release
+test build for amd64
+general code cleanup
 update download urls for packages (notably w64devkit to 2.0)
 build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
-test build for amd64, x86 and arm64
+test build for x86 and arm64
 add armv7 support

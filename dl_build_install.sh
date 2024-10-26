@@ -71,13 +71,13 @@ download_libarchive() {
   cd "$NP_BUILDDIR/download" || exit 1
   $_dl_cmd "$LIBARCHIVE_URL" || exit 1
   tar Jxvf "$NP_BUILDDIR"/download/libarchive-*.tar.xz -C "$NP_BUILDDIR"/build || exit 1
-  mv "$NP_BUILDDIR"/libarchive-* "$NP_BUILDDIR"/libarchive || exit 1
+  mv -v "$NP_BUILDDIR"/libarchive-* "$NP_BUILDDIR"/libarchive || exit 1
 }
 
 build_libarchive() {
-  cd "$NP_BUILDDIR"/libarchive || exit 1
-  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar
-  make -j${BUILD_JOBS}
+  cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
+  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
+  make -j${BUILD_JOBS} || error "build error"
 }
 
 install_libarchive() {
@@ -87,63 +87,131 @@ install_libarchive() {
 }
 
 # Libressl (required for Curl)
-download_host_libressl() {
-  return 0 # TODO
+download_libressl() {
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$LIBRESSL_URL" || exit 1
+  tar zxvf "$NP_BUILDDIR"/download/libressl-*.tar.gz -C "$NP_BUILDDIR"/build || exit 1
+  mv -v "$NP_BUILDDIR"/libressl-* "$NP_BUILDDIR"/libressl || exit 1
 }
 
 build_host_libressl() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
+  ./configure --host="$TARGET_HOST" --prefix="$NP_BUILDDIR"/host --disable-nc || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
 }
 
 install_host_libressl() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
+  make install
 }
 
-install_libressl_libs() {
-  return 0 # TODO
+build_libressl() {
+  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
+  make distclean || error "build error" # we built host-libressl earlier, so we need to restart from zero to change the --prefix setting... this is why gnu autotools is absolute hot garbage
+  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-nc || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
+}
+
+install_libressl() {
+  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
+  make install DESTDIR="$NP_BUILDDIR"/install_dir
 }
 
 # Curl
 download_curl() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$CURL_URL" || error "download error"
+  tar Jxvf "$NP_BUILDDIR"/download/curl-*.tar.xz -C "$NP_BUILDDIR"/build
+  mv -v "$NP_BUILDDIR"/build/curl-* "$NP_BUILDDIR"/build/curl
 }
 
 build_curl() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/curl || error "directory error"
+  ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
+              --with-openssl="$NP_BUILDDIR"/host \
+              --enable-threaded-resolver \
+              --host="$TARGET_HOST" \
+              --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
+              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
+              --with-ca-path="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "build error"
+  make -j"$BUILD_JOBS" || error "build error"
 }
 
 install_curl() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/curl || error "directory error"
+  make install
+  # curl runtime dll needs to be copied alongside curl.exe
+  cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libcurl-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 }
 
 # libgnurx (required for File)
 download_host_libgnurx() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$LIBGNURX_URL"
+  # destdir patch from mingw-packages, should it be hardcoded like that ?
+  # $_dl_cmd https://raw.githubusercontent.com/msys2/MINGW-packages/refs/heads/master/mingw-w64-libgnurx/mingw-w64-libgnurx-honor-destdir.patch
+  tar zxvf "$NP_BUILDDIR"/download/mingw-libgnurx-* -C "$NP_BUILDDIR"/build/
+  mv -v "$NP_BUILDDIR"/build/mingw-libgnurx-* "$NP_BUILDDIR"/build/libgnurx
 }
 
-build_host_libgnurx() {
-  return 0 # TODO
+build_libgnurx() {
+  cd "$NP_BUILDDIR"/build/libgnurx || error "directory error"
+  ./configure --prefix="$BUILD_PREFIX" --host="$TARGET_HOST"
+  make -j"$BUILD_JOBS"
 }
 
 install_host_libgnurx() {
-  return 0 # TODO
+  mkdir -v "$NP_BUILDDIR"/host/lib
+  mkdir -v "$NP_BUILDDIR"/host/bin
+  mkdir -v "$NP_BUILDDIR"/host/include
+  cp -v "$NP_BUILDDIR"/build/libgnurx/regex.h "$NP_BUILDDIR"/host/include
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx-*.dll "$NP_BUILDDIR"/host/bin
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx.dll.a "$NP_BUILDDIR"/host/lib
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libregex.a "$NP_BUILDDIR"/host/lib
 }
 
-install_libgnurx_libs() {
-  return 0 # TODO
+install_libgnurx() {
+  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib
+  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
+  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
+  cp -v "$NP_BUILDDIR"/build/libgnurx/regex.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx.dll.a "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib
+  cp -v "$NP_BUILDDIR"/build/libgnurx/libregex.a "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib
 }
 
 # File
 download_file() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$FILE_URL" || error "download error"
+  tar zxvf "$NP_BUILDDIR"/download/file-*.tar.gz -C "$NP_BUILDDIR"/build
+  mv -v "$NP_BUILDDIR"/build/file-* "$NP_BUILDDIR"/build/file
 }
 
 build_file() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/file || error "directory error"
+  patch -Np0 < "$NP_BUILDDIR"/patches/00-file-cdf_ctime-fix.patch || error "patch error" # fixes build error with mingw64-gcc 14.2.0
+  CFLAGS="-I/tmp/win32libs/include" \
+  LDFLAGS="-L/tmp/win32libs/lib" \
+  ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
+              --enable-static \
+              --enable-shared \
+              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
+              --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
+              --host="$TARGET_HOST" \
+              --disable-zlib \
+              --disable-bzlib \
+              --disable-lzlib \
+              --disable-zstdlib \
+              --disable-libseccomp || error "build error"
+  make -j"$BUILD_JOBS"
 }
 
 install_file() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/build/file || error "directory error"
+  make install DESTDIR="$NP_BUILDDIR"/install_dir
+  # libmagic runtime dll needs to be alongside file.exe
+  cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libmagic-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 }
 
 # ConEmu
@@ -342,13 +410,13 @@ install_pdcurses() {
   # make directories
   mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"
   mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
+  mkdir -pv "$NP_BUILDDIR"/host/lib
+  mkdir -pv "$NP_BUILDDIR"/host/include
   # base system install
   cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
   cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include
-
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libpdcurses.a
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libcurses.a
-
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libpdcurses.dll
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libcurses.dll
 
@@ -356,8 +424,12 @@ install_pdcurses() {
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 
   # host toolchain install
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/
-  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/host/
+  cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/host/include/
+  cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/host/include/
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/lib/libpdcurses.a
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/host/lib/libpdcurses.dll
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/lib/libcurses.a
+  cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/host/lib/libcurses.dll
 }
 
 # x64dbg
