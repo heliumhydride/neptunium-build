@@ -191,9 +191,7 @@ build_llvm() {
 }
 
 install_llvm() {
-  [ "$BUILD_LLVM" = 1 ] || {
-    cp -rv "$NP_BUILDDIR"/build/llvm-mingw/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"
-  }
+  cp -rv "$NP_BUILDDIR"/build/llvm-mingw/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"
 }
 
 # Netwide assembler

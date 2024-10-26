@@ -142,22 +142,39 @@ info "ok, downloading needed files"
 
 # ---DOWNLOADING---
 # base system tools
+info "downloading busybox-w32"
 download_busybox_w32
+info "downloading libarchive"
 download_libarchive
+info "downloading curl"
 download_curl
+info "downloading file"
 download_file
+info "downloading conemu"
 download_conemu
 # development tools
+info "downloading llvm-mingw"
 download_llvm
+info "downloading nasm"
 download_nasm
+info "downloading gmake"
 download_gmake
+info "downloading vim"
 download_vim
+info "downloading w64devkit (pkg-config, vc++filt, debugbreak)"
 download_w64devkit
-[ -z "$X64DBG_CUSTOM_PATH" ] && download_x64dbg
-[ "$FREE_SOFTWARE_ONLY" = 1 ] || download_depends
+info "downloading/copying x64dbg"
+download_x64dbg
+[ "$FREE_SOFTWARE_ONLY" = 1 ] || {
+  info "downloading dependency walker"
+  download_depends
+}
 # additional libs
+info "downloading pdcurses"
 download_pdcurses
+info "downloading host-libressl"
 download_host_libressl
+info "downloading host-libgnurx"
 download_host_libgnurx
 
 info "creating base directory structure"
@@ -168,45 +185,82 @@ mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/home
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
 
 # --- COMPILING HOST LIBS ---
+info "building pdcurses"
 build_pdcurses
+info "building host-libressl"
 build_host_libressl
+info "building host-libgnurx"
 build_host_libgnurx
 
 # --- COMPILING NEPTUNUM DISTRIBUTION ---
+info "building busybox-w32"
 build_busybox_w32
+info "building libarchive"
 build_libarchive
+info "building curl"
 build_curl
+info "building file"
 build_file
+#info "building conemu"
 #build_conemu
+info "building nasm"
 build_nasm
+info "building gmake"
 build_gmake
+info "building vim"
 build_vim
-# 3 following pkgs from w64devkit
+info "building pkg-config from w64devkit"
 build_pkg_config
+info "building vc++filt from w64devkit"
 build_vcppfilt
+info "building debugbreak from w64devkit"
 build_debugbreak
+#info "building x64dbg"
 #build_x64dbg
-build_llvm
+[ "$BUILD_LLVM" = 1 ] && {
+  info "building llvm-mingw (takes a long time)"
+  build_llvm
+}
 
 # --- INSTALLING ---
+info "installing busybox-w32"
 install_busybox_w32
+info "installing libarchive"
 install_libarchive
+info "installing libressl libraries"
 install_libressl_libs
+info "installing curl"
 install_curl
+info "installing libgnurx libraries"
 install_libgnurx_libs
+info "installing file"
 install_file
+info "installing conemu"
 install_conemu
-[ "$BUILD_LLVM" = 1 ] || install_llvm
+[ "$BUILD_LLVM" = 1 ] || {
+  info "installing llvm-mingw"
+  install_llvm
+}
+info "installing nasm"
 install_nasm
+info "installing gmake"
 install_gmake
+info "installing pdcurses"
 install_pdcurses
+info "installing vim"
 install_vim
-# 3 following pkgs from w64devkit
+info "installing pkg-config from w64devkit"
 install_pkg_config
+info "installing vc++filt from w64devkit"
 install_vcppfilt
+info "installing debugbreak from w64devkit"
 install_debugbreak
+info "installing x64dbg"
 install_x64dbg
-[ "$FREE_SOFTWARE_ONLY" = 1 ] || install_depends
+[ "$FREE_SOFTWARE_ONLY" = 1 ] || {
+  info "installing dependency walker"
+  install_depends
+}
 
 info "creating distribution zip"
 ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
