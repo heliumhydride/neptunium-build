@@ -1,2 +1,4 @@
 finish dl_build_install.sh commands
 update download urls for packages (notably w64devkit to 2.0)
+build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
+test build for amd64, x86 and arm64

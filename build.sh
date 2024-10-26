@@ -13,7 +13,7 @@ BUILD_JOBS="$(nproc)"
 NP_BUILDDIR="$(dirname "$0")/"
 [ -z "$NP_BUILDDIR" ] && exit 2
 
-. "${NP_BUILDDIR}dl_build_install"
+. "${NP_BUILDDIR}dl_build_install.sh"
 
 error() {
   printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1"
