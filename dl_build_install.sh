@@ -10,7 +10,9 @@ LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
 CURL_URL="https://curl.se/download/curl-8.8.0.tar.xz"
 W64DEVKIT_URL="https://github.com/skeeto/w64devkit/archive/refs/tags/v1.23.0.tar.gz"
 PDCURSES_URL="https://github.com/wmcbrine/PDCurses/archive/refs/tags/3.9.tar.gz"
-NEPTUNIUM_BASE_URL=""
+# TODO add release on neptunium-base-files and use that instead of directly using the master branch
+NEPTUNIUM_BASE_URL="https://github.com/heliumhydride/neptunium-base-files/archive/refs/heads/master.tar.gz"
+
 
 LIBRESSL_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.9.2.tar.gz"
 LIBGNURX_URL="https://downloads.sourceforge.net/mingw/Other/UserContributed/regex/mingw-regex-2.5.1/mingw-libgnurx-2.5.1-src.tar.gz"
