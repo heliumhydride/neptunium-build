@@ -286,15 +286,15 @@ build_debugbreak() {
 }
 
 install_pkg_config() {
-  cp -v "$NP_BUILDDIR"/build/w64devkit/src/pkg-config.exe "$NP_BUILDDIR"/install_dir/$BUILD_PREFIX/bin/
+  cp -v "$NP_BUILDDIR"/build/w64devkit/src/pkg-config.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 }
 
 install_vcppfilt() {
-  cp -v "$NP_BUILDDIR"/build/w64devkit/src/vc++filt.exe "$NP_BUILDDIR"/install_dir/$BUILD_PREFIX/bin/
+  cp -v "$NP_BUILDDIR"/build/w64devkit/src/vc++filt.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 }
 
 install_debugbreak() {
-  cp -v "$NP_BUILDDIR"/build/w64devkit/src/debugbreak.exe "$NP_BUILDDIR"/install_dir/$BUILD_PREFIX/bin/
+  cp -v "$NP_BUILDDIR"/build/w64devkit/src/debugbreak.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
 }
 
 # PDCurses
@@ -339,19 +339,35 @@ install_pdcurses() {
 
 # x64dbg
 download_x64dbg() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  if [ -n "$X64DBG_CUSTOM_PATH" ]; then # if we use custom x64dbg.zip
+    cp -v "$X64DBG_CUSTOM_PATH" "$NP_BUILDDIR"/download/x64dbg.zip
+  else
+    $_dl_cmd "$MAKE_URL" || exit 1
+    mv -v "$NP_BUILDDIR"/build/snapshot-*.zip "$NP_BUILDDIR"/build/x64dbg.zip
+  fi
+  mkdir -v "$NP_BUILDDIR"/build/x64dbg
+  unzip "$NP_BUILDDIR"/download/x64dbg.zip -d "$NP_BUILDDIR"/build/x64dbg/
 }
 
 install_x64dbg() {
-  return 0 # TODO
+  mkdir -pv "$NP_BUILDDIR"/install_dir/share/x64dbg
+  cp -rv "$NP_BUILDDIR"/build/x64dbg/release "$NP_BUILDDIR"/install_dir/share/x64dbg/
 }
 
 # Dependency walker (depends.exe)
 download_depends() {
-  return 0 # TODO
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  if [ "$ARCH" = "x86" ]; then
+    $_dl_cmd "$DEPENDS_X86_URL" || exit 1
+  else # this assumes arm64-x86_64 compatibility, and so assumes windows 11...
+    $_dl_cmd "$DEPENDS_AMD64_URL" || exit 1
+  fi
+  mkdir -v "$NP_BUILDDIR"/build/depends
+  unzip "$NP_BUILDDIR"/download/depends*.zip -d "$NP_BUILDDIR"/build/depends/
 }
 
 install_depends() {
-  return 0 # TODO
+  cp -v "$NP_BUILDDIR"/build/depends/depends.* "$NP_BUILDDIR"/install_dir/bin/
 }
 
