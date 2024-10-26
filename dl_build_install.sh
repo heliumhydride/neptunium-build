@@ -84,67 +84,67 @@ install_libarchive() {
 
 # Libressl (required for Curl)
 download_host_libressl() {
-  
+  return 0 # TODO
 }
 
 build_host_libressl() {
-  
+  return 0 # TODO
 }
 
 install_host_libressl() {
-  
+  return 0 # TODO
 }
 
 install_libressl_libs() {
-  
+  return 0 # TODO
 }
 
 # Curl
 download_curl() {
-
+  return 0 # TODO
 }
 
 build_curl() {
-
+  return 0 # TODO
 }
 
 install_curl() {
-
+  return 0 # TODO
 }
 
 # libgnurx (required for File)
 download_host_libgnurx() {
-  
+  return 0 # TODO
 }
 
 build_host_libgnurx() {
-  
+  return 0 # TODO
 }
 
 install_host_libgnurx() {
-  
+  return 0 # TODO
 }
 
 install_libgnurx_libs() {
-
+  return 0 # TODO
 }
 
 # File
 download_file() {
-
+  return 0 # TODO
 }
 
 build_file() {
-
+  return 0 # TODO
 }
 
 install_file() {
-
+  return 0 # TODO
 }
 
 # ConEmu
 download_conemu() {
-
+  return 0 # TODO
 }
 
 build_conemu() {
@@ -153,7 +153,7 @@ build_conemu() {
 }
 
 install_conemu() {
-
+  return 0 # TODO
 }
 
 # LLVM-MinGW (http://github.com/mstorsjo/llvm-mingw)
@@ -270,7 +270,7 @@ build_pkg_config() {
         -s -,pstdmob -DPKG_CONFIG_PREFIX="\"/$ARCH\"" -o pkg-config.exe pkg-config.c -lkernel32
 }
 
-build_vc++filt() {
+build_vcppfilt() {
   cd "$NP_BUILDDIR"/build/w64devkit/src || error "directory error"
   ${TARGET_HOST}-gcc -Os -fno-asynchronous-unwind-tables -fno-builtin -Wl,--gc-sections \
         -s -nostdlib -o vc++filt.exe vc++filt.c -lkernel32 -lshell32 -ldbghelp
@@ -287,7 +287,7 @@ install_pkg_config() {
   cp -v "$NP_BUILDDIR"/build/w64devkit/src/pkg-config.exe "$NP_BUILDDIR"/install_dir/$BUILD_PREFIX/bin/
 }
 
-install_vc++filt() {
+install_vcppfilt() {
   cp -v "$NP_BUILDDIR"/build/w64devkit/src/vc++filt.exe "$NP_BUILDDIR"/install_dir/$BUILD_PREFIX/bin/
 }
 
@@ -337,19 +337,19 @@ install_pdcurses() {
 
 # x64dbg
 download_x64dbg() {
-
+  return 0 # TODO
 }
 
 install_x64dbg() {
-
+  return 0 # TODO
 }
 
 # Dependency walker (depends.exe)
 download_depends() {
-
+  return 0 # TODO
 }
 
 install_depends() {
-
+  return 0 # TODO
 }
 

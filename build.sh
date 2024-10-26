@@ -180,7 +180,7 @@ build_gmake
 build_vim
 # 3 following pkgs from w64devkit
 build_pkg_config
-build_vc++filt
+build_vcppfilt
 build_debugbreak
 #build_x64dbg
 build_llvm
@@ -200,7 +200,7 @@ install_pdcurses
 install_vim
 # 3 following pkgs from w64devkit
 install_pkg_config
-install_vc++filt
+install_vcppfilt
 install_debugbreak
 install_x64dbg
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || install_depends
