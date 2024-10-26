@@ -269,7 +269,7 @@ download_w64devkit() {
 build_pkg_config() {
   cd "$NP_BUILDDIR"/build/w64devkit/src || error "directory error"
   ${TARGET_HOST}-gcc -Os -fno-asynchronous-unwind-tables -fno-builtin -Wl,--gc-sections \
-        -s -,pstdmob -DPKG_CONFIG_PREFIX="\"/$ARCH\"" -o pkg-config.exe pkg-config.c -lkernel32
+        -s -nostdlib -DPKG_CONFIG_PREFIX="\"/$ARCH\"" -o pkg-config.exe pkg-config.c -lkernel32
 }
 
 build_vcppfilt() {
