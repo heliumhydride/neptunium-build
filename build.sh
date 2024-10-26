@@ -33,8 +33,8 @@ success() {
 }
 
 check_installed() {
-  $1 > /dev/null 2>&1
-  [ "$?" -eq 127 ] && error "$1 command not installed / not found in \$PATH"
+  which $1 > /dev/null 2>&1
+  [ "$?" -eq 1 ] && error "$1 command not installed / not found in \$PATH"
 }
 
 print_usage() {
@@ -94,7 +94,6 @@ check_installed gzip
 check_installed xz
 check_installed unzip
 check_installed 7z
-
 
 case "$ARCH" in
   amd64) TARGET_HOST="x86_64-w64-mingw32"
