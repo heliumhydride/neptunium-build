@@ -409,7 +409,9 @@ install_pdcurses() {
 
   # cd "$NP_BUILDDIR"/build/pdcurses || exit 1
   # make directories
-  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST" || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
   mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin || error "installation error"
   mkdir -pv "$NP_BUILDDIR"/host/lib || error "installation error"
   mkdir -pv "$NP_BUILDDIR"/host/include || error "installation error"

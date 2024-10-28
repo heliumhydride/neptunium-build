@@ -187,7 +187,6 @@ mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/home
 mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share
-mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib
 
 # --- COMPILING HOST LIBS ---
 info "building pdcurses"
