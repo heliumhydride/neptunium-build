@@ -10,7 +10,7 @@ LOG_FILE="build.log"
 DOWNLOAD_AGENT="curl"
 BUILD_JOBS="$(nproc)"
 
-NP_BUILDDIR="$(dirname "$0")/"
+NP_BUILDDIR="$(pwd)/"
 [ -z "$NP_BUILDDIR" ] && exit 2
 
 . "$NP_BUILDDIR"/dl_build_install.sh
