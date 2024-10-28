@@ -45,11 +45,11 @@ download_busybox_w32() {
   cd "$NP_BUILDDIR"/download || error "directory error"
   $_dl_cmd "$BUSYBOX_URL" || error "download error"
   tar zxvf "$NP_BUILDDIR"/download/busybox-w32-FRP-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv "$NP_BUILDDIR"/build/busybox-w32-FRP-* "$NP_BUILDDIR"/busybox-w32 || error "extraction error"
+  mv "$NP_BUILDDIR"/build/busybox-w32-FRP-* "$NP_BUILDDIR"/build/busybox-w32 || error "extraction error"
 }
 
 build_busybox_w32() {
-  cd "$NP_BUILDDIR/build/busybox-w32" || error "directory error"
+  cd "$NP_BUILDDIR"/build/busybox-w32 || error "directory error"
   CROSS_COMPILE="${TARGET_HOST}-"
   case $ARCH in
     amd64) make mingw64_defconfig || error "build error";;
@@ -68,10 +68,10 @@ install_busybox_w32() {
 
 # libarchive (bsdcpio, bsdtar)
 download_libarchive() {
-  cd "$NP_BUILDDIR/download" || error "directory error"
+  cd "$NP_BUILDDIR"/download || error "directory error"
   $_dl_cmd "$LIBARCHIVE_URL" || error "download error"
   tar Jxvf "$NP_BUILDDIR"/download/libarchive-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/libarchive-* "$NP_BUILDDIR"/libarchive || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/libarchive-* "$NP_BUILDDIR"/build/libarchive || error "extraction error"
 }
 
 build_libarchive() {
@@ -91,7 +91,7 @@ download_libressl() {
   cd "$NP_BUILDDIR"/download || error "directory error"
   $_dl_cmd "$LIBRESSL_URL" || error "download error"
   tar zxvf "$NP_BUILDDIR"/download/libressl-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/libressl-* "$NP_BUILDDIR"/libressl || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/libressl-* "$NP_BUILDDIR"/build/libressl || error "extraction error"
 }
 
 build_host_libressl() {
