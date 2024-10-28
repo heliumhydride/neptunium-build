@@ -75,7 +75,7 @@ download_libarchive() {
 
 build_libarchive() {
   cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
-  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
+  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --without-xml2 --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
 
@@ -191,8 +191,8 @@ download_file() {
 build_file() {
   cd "$NP_BUILDDIR"/build/file || error "directory error"
   patch -Np0 < "$NP_BUILDDIR"/patches/00-file-cdf_ctime-fix.patch || error "patch error" # fixes build error with mingw64-gcc 14.2.0
-  CFLAGS="-I/tmp/win32libs/include" \
-  LDFLAGS="-L/tmp/win32libs/lib" \
+  CFLAGS="-I${NP_BUILDDIR}/host/include" \
+  LDFLAGS="-L${NP_BUILDDIR}/host/lib" \
   ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
               --enable-static \
               --enable-shared \
