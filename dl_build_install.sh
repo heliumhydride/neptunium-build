@@ -440,7 +440,7 @@ download_x64dbg() {
     cp -v "$X64DBG_CUSTOM_PATH" "$NP_BUILDDIR"/download/x64dbg.zip || error "copying error"
   else
     $_dl_cmd "$X64DBG_URL" || error "download error"
-    mv -v "$NP_BUILDDIR"/download/snapshot-*.zip "$NP_BUILDDIR"/download/x64dbg.zip || error "file error"
+    mv -v "$NP_BUILDDIR"/download/snapshot_*.zip "$NP_BUILDDIR"/download/x64dbg.zip || error "file error"
   fi
   mkdir -v "$NP_BUILDDIR"/build/x64dbg || error "extraction error"
   unzip "$NP_BUILDDIR"/download/x64dbg.zip -d "$NP_BUILDDIR"/build/x64dbg/ || error "extraction error"
