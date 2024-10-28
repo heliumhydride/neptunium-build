@@ -70,7 +70,7 @@ while :; do
     --dl-agent) shift; DOWNLOAD_AGENT="$1";;
     --free) FREE_SOFTWARE_ONLY=1;;
     -o|--output-log) shift; LOG_FILE="$1";;
-    -v|--verbose) LOG_FILE="/dev/stdout";;
+    -v|--verbose) VERBOSE=1; LOG_FILE="/dev/stdout";;
     -c|--clean) _clean_mode=1;;
     --) shift; break;;
     '') break;;
@@ -82,9 +82,11 @@ done
 [ "$_clean_mode" = 1 ] && {
   info "cleaning all inside build directory and downloads"
   clean_fail=0
-  rm -rv "${NP_BUILDDIR}build"/* || warn "something wrong happened while cleaning build files"; _clean_fail=1
-  rm -rv "${NP_BUILDDIR}download"/* || warn "something wrong happened while cleaning downloads"; _clean_fail=1
-  rm -rv "${NP_BUILDDIR}output"/* || warn "something wrong happened while cleaning output zips" _clean_fail=1
+  _rm_v=""
+  [ "$VERBOSE" -eq 1 ] && _rm_v="-v"
+  rm -r "$_rm_v" "${NP_BUILDDIR}build"/* || warn "something wrong happened while cleaning build files"; _clean_fail=1
+  rm -r "$_rm_v" "${NP_BUILDDIR}download"/* || warn "something wrong happened while cleaning downloads"; _clean_fail=1
+  rm -r "$_rm_v" "${NP_BUILDDIR}output"/* || warn "something wrong happened while cleaning output zips" _clean_fail=1
   exit "$clean_fail"
 }
 
