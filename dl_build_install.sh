@@ -80,6 +80,7 @@ build_libarchive() {
 }
 
 install_libarchive() {
+  cd "$NP_BUILDDIR"/build/libarchive
   make install DESTDIR="$NP_BUILDDIR"/install_dir || error "installation error"
   mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdtar.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/tar.exe || error "installation error"
   mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdcpio.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cpio.exe || error "installation error"

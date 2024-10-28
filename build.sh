@@ -6,12 +6,13 @@ ANSI_YELLOW="\033[1;33m"
 ANSI_BLUE="\033[1;34m"
 ANSI_NORM="\033[0m"
 
-LOG_FILE="build.log"
+NP_BUILDDIR="$(pwd)/"
+[ -z "$NP_BUILDDIR" ] && exit 2
+
+LOG_FILE="${NP_BUILDDIR}/build.log"
 DOWNLOAD_AGENT="curl"
 BUILD_JOBS="$(nproc)"
 
-NP_BUILDDIR="$(pwd)/"
-[ -z "$NP_BUILDDIR" ] && exit 2
 
 . "$NP_BUILDDIR"/dl_build_install.sh
 
