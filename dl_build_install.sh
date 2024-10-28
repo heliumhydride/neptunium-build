@@ -161,9 +161,9 @@ build_libgnurx() {
 }
 
 install_host_libgnurx() {
-  mkdir -v "$NP_BUILDDIR"/host/lib || error "installation error"
-  mkdir -v "$NP_BUILDDIR"/host/bin || error "installation error"
-  mkdir -v "$NP_BUILDDIR"/host/include || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/host/lib || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/host/bin || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/host/include || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/regex.h "$NP_BUILDDIR"/host/include || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx-*.dll "$NP_BUILDDIR"/host/bin || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx.dll.a "$NP_BUILDDIR"/host/lib || error "installation error"
@@ -171,9 +171,9 @@ install_host_libgnurx() {
 }
 
 install_libgnurx() {
-  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "installation error"
-  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
-  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/regex.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin || error "installation error"
   cp -v "$NP_BUILDDIR"/build/libgnurx/libgnurx.dll.a "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "installation error"
