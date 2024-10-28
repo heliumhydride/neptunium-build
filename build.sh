@@ -13,7 +13,7 @@ BUILD_JOBS="$(nproc)"
 NP_BUILDDIR="$(dirname "$0")/"
 [ -z "$NP_BUILDDIR" ] && exit 2
 
-. "${NP_BUILDDIR}dl_build_install.sh"
+. "$NP_BUILDDIR"/dl_build_install.sh
 
 error() {
   printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1" >&2
@@ -83,10 +83,10 @@ done
   info "cleaning all inside build directory and downloads"
   clean_fail=0
   _rm_v=""
-  [ "$VERBOSE" -eq 1 ] && _rm_v="-v"
-  rm -r "$_rm_v" "${NP_BUILDDIR}build"/* || warn "something wrong happened while cleaning build files"; _clean_fail=1
-  rm -r "$_rm_v" "${NP_BUILDDIR}download"/* || warn "something wrong happened while cleaning downloads"; _clean_fail=1
-  rm -r "$_rm_v" "${NP_BUILDDIR}output"/* || warn "something wrong happened while cleaning output zips" _clean_fail=1
+  [ "$VERBOSE" = 1 ] && _rm_v="-v"
+  rm -r $_rm_v "$NP_BUILDDIR"build/* || warn "something wrong happened while cleaning build files"; _clean_fail=1
+  rm -r $_rm_v "$NP_BUILDDIR"download/* || warn "something wrong happened while cleaning downloads"; _clean_fail=1
+  rm -r $_rm_v "$NP_BUILDDIR"output/* || warn "something wrong happened while cleaning output zips"; _clean_fail=1
   exit "$clean_fail"
 }
 
