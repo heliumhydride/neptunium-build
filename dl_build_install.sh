@@ -415,7 +415,7 @@ install_pdcurses() {
   mkdir -pv "$NP_BUILDDIR"/host/include || error "installation error"
   # base system install
   cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
-  cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
+  cp -v "$NP_BUILDDIR"/build/pdcurses/panel.h "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libpdcurses.a || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a   "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libcurses.a || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libpdcurses.dll || error "installation error"
@@ -426,7 +426,7 @@ install_pdcurses() {
 
   # host toolchain install
   cp -v "$NP_BUILDDIR"/build/pdcurses/curses.h "$NP_BUILDDIR"/host/include/ || error "installation error"
-  cp -v "$NP_BUILDDIR"/build/pdcurses/menu.h "$NP_BUILDDIR"/host/include/ || error "installation error"
+  cp -v "$NP_BUILDDIR"/build/pdcurses/panel.h "$NP_BUILDDIR"/host/include/ || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/lib/libpdcurses.a || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.dll "$NP_BUILDDIR"/host/lib/libpdcurses.dll || error "installation error"
   cp -v "$NP_BUILDDIR"/build/pdcurses/wincon/pdcurses.a "$NP_BUILDDIR"/host/lib/libcurses.a || error "installation error"
