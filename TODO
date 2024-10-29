@@ -1,7 +1,9 @@
-dl_build_install.sh: double check every path
 test build for amd64
+use custom config for busybox
+write a test suite to test every package and feature
 general code cleanup
 neptunium base files release
+add git and 7zip
 update download urls for packages:
   w64devkit 2.0.0
   busybox-w32 FRP-5467-g9376eebd8
