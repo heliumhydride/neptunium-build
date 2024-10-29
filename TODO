@@ -1,5 +1,8 @@
+install missing vim64.dll
+use custom config for busybox and redo busybox_alias_install with new program names (to prevent busybox tar/make/cpio from overtaking libarchive/gmake)
+curl https not working (where do we get ssl certificates ?)
+remove background cmd when running neptunium.cmd (not neptunium_here.cmd)
 test build for amd64
-use custom config for busybox
 write a test suite to test every package and feature
 general code cleanup
 neptunium base files release
