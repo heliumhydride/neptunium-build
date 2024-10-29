@@ -147,6 +147,8 @@ info "ok, downloading needed files"
 
 # ---DOWNLOADING---
 # base system tools
+info "downloading neptunium-base-files"
+download_neptunium_base
 info "downloading busybox-w32"
 download_busybox_w32
 info "downloading libarchive"
@@ -276,6 +278,8 @@ install_x64dbg > "$LOG_FILE"
   info "installing dependency walker"
   install_depends > "$LOG_FILE"
 }
+info "installing neptunium-base-files"
+install_neptunium_base
 
 info "creating distribution zip"
 ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
