@@ -194,11 +194,11 @@ build_file() {
   patch -Np0 < "$NP_BUILDDIR"/patches/00-file-cdf_ctime-fix.patch || error "patch error" # fixes build error with mingw64-gcc 14.2.0
   CFLAGS="-I${NP_BUILDDIR}/host/include" \
   LDFLAGS="-L${NP_BUILDDIR}/host/lib" \
-  ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
+  ./configure --prefix="$BUILD_PREFIX" \
               --enable-static \
               --enable-shared \
-              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
-              --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
+              --libdir="$BUILD_PREFIX"/"$TARGET_HOST"/lib \
+              --includedir="$BUILD_PREFIX"/"$TARGET_HOST"/include \
               --host="$TARGET_HOST" \
               --disable-zlib \
               --disable-bzlib \
