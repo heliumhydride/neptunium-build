@@ -141,7 +141,7 @@ install_curl() {
   cd "$NP_BUILDDIR"/build/curl || error "directory error"
   make install || error "installation error"
   # curl runtime dll needs to be copied alongside curl.exe
-  cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib/libcurl-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
+  cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libcurl-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
 }
 
 # libgnurx (required for File)
