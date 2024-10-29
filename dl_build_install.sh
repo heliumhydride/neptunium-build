@@ -234,7 +234,7 @@ download_conemu() {
 #}
 
 install_conemu() {
-  mkdir -pv "$NP_BUILDDIR"/install_dir/share/conemu || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/conemu || error "installation error"
   cp -rv "$NP_BUILDDIR"/build/conemu/* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/conemu/ || error "installation error"
 }
 
@@ -281,7 +281,7 @@ build_nasm() {
 
 install_nasm() {
   cd "$NP_BUILDDIR"/build/nasm || error "directory error"
-  cp -v nasm.exe ndisasm.exe "$NP_BUILDDIR"/install_dur/"$BUILD_PREFIX"/bin || error "installation error"
+  cp -v nasm.exe ndisasm.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin || error "installation error"
 }
 
 # GNU Make
@@ -450,8 +450,8 @@ download_x64dbg() {
 }
 
 install_x64dbg() {
-  mkdir -pv "$NP_BUILDDIR"/install_dir/share/x64dbg || error "installation error"
-  cp -rv "$NP_BUILDDIR"/build/x64dbg/release "$NP_BUILDDIR"/install_dir/share/x64dbg/ || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/x64dbg || error "installation error"
+  cp -rv "$NP_BUILDDIR"/build/x64dbg/release "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/x64dbg/ || error "installation error"
 }
 
 # Dependency walker (depends.exe)
@@ -467,6 +467,6 @@ download_depends() {
 }
 
 install_depends() {
-  cp -v "$NP_BUILDDIR"/build/depends/depends.* "$NP_BUILDDIR"/install_dir/bin/ || error "installation error"
+  cp -v "$NP_BUILDDIR"/build/depends/depends.* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
 }
 
