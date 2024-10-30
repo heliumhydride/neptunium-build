@@ -10,6 +10,7 @@ A handy development environment for Windows 7+
 ### Running
 - Download a 7z file from the [releases page](https://github.com/heliumhydride/neptunium-build/releases) according to your architecture
 - Extract it to the root of any drive (C:/, D:/, ...)
+  - If 7-Zip / WinRAR asks you if you want to replace files, say 'No to All'
 - Run neptunium.cmd in the extracted directory
 
 ## Building neptunium
@@ -28,6 +29,7 @@ A handy development environment for Windows 7+
 - (Run `./build.sh -h` to see available architectures, build options, ...)
 
 ## Credits
-* [w64devkit](https://github.com/skeeto/w64devkit), a few files from this project are used and the main inspiration for this project
+- [w64devkit](https://github.com/skeeto/w64devkit), a few files from this project are used and the main inspiration for this project
 - [llvm-mingw](https://github.com/mstorsjo/llvm-mingw), half of what makes this project possible
 - [busybox-w32](https://github.com/rmyorston/busybox-w32), the other half of what makes this project possible
+
