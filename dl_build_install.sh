@@ -58,22 +58,22 @@ build_busybox_w32() {
   # TODO patch config accordingly to neptunium64_config
   # patch config with sed, w64devkit style
   # do we keep 'man' on windows ? how do we configure it to use '/neptunium*/share/man/...' ?
-  sed -ri 's/^(CONFIG_AR)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_TAR)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_CPIO)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_DPKG\w*)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_FTP\w*)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_LINK)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_MAN)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_MAKE)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_PDPMAKE)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_RPM\w*)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_STRINGS)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_TEST2)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_TSORT)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_UNLINK)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_VI)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_XXD)=y/\1=n/' .config
+  sed -ri 's/^(CONFIG_AR)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_TAR)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_CPIO)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_DPKG\w*)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_FTP\w*)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_LINK)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_MAN)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_MAKE)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_PDPMAKE)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_RPM\w*)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_STRINGS)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_TEST2)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_TSORT)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_UNLINK)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_VI)=y/\1=n/' .config || error "build error"
+  sed -ri 's/^(CONFIG_XXD)=y/\1=n/' .config || error "build error"
   make -j "$BUILD_JOBS" CROSS_COMPILE="${TARGET_HOST}-" || error "build error"
 }
 
@@ -168,7 +168,7 @@ download_ca_certs() {
 }
 
 install_ca_certs() {
-  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "installation error"
+  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "installation error"
   cp -v "$NP_BUILDDIR"/download/cacert.pem "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/curl-ca-bundle.crt || error "installation error"
 }
 
