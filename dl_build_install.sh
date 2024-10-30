@@ -52,7 +52,7 @@ download_busybox_w32() {
 build_busybox_w32() {
   cd "$NP_BUILDDIR"/build/busybox-w32 || error "directory error"
   case $ARCH in
-    amd64|x86) CROSS_COMPILE="${TARGET_HOST}-" make mingw64u_defconfig || error "build error";;
+    amd64|x86) CROSS_COMPILE="${TARGET_HOST}-" make mingw64_defconfig || error "build error";;
     arm64) CROSS_COMPILE="${TARGET_HOST}-" make mingw64a_defconfig || error "build error";;
   esac
   # TODO patch config accordingly to neptunium64_config
