@@ -144,6 +144,7 @@ download_curl() {
 
 build_curl() {
   cd "$NP_BUILDDIR"/build/curl || error "directory error"
+  # TODO if we have problems with path in curl, fix prefix, includedir, libdir and add DESTDIR=... to 'make install'
   ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
               --with-openssl="$NP_BUILDDIR"/host \
               --enable-threaded-resolver \
