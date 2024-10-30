@@ -1,4 +1,5 @@
-curl https not working (where do we get ssl certificates ?)
+(fixed ?) vimdll/clang building issues
+(fixed ?) curl https not working (where do we get ssl certificates ?)
 remove background cmd when running neptunium.cmd (not neptunium_here.cmd)
 use a windows preinstalled font by default for conemu-neptunium.xml (for neptunium-base-files)
 test build for amd64

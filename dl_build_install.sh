@@ -160,6 +160,16 @@ install_curl() {
   cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libcurl-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
 }
 
+download_ca_certs() {
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  $_dl_cmd "$CACERTS_URL" || error "download error"
+}
+
+install_ca_certs() {
+  mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "installation error"
+  cp -v "$NP_BUILDDIR"/download/cacert.pem "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs/ca-bundle.crt || error "installation error"
+}
+
 # libgnurx (required for File)
 download_host_libgnurx() {
   cd "$NP_BUILDDIR"/download || error "directory error"
