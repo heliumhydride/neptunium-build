@@ -12,7 +12,7 @@ NP_BUILDDIR="$(pwd)/"
 LOG_FILE="${NP_BUILDDIR}/build.log"
 DOWNLOAD_AGENT="curl"
 BUILD_JOBS="$(nproc)"
-
+NEW_USERLAND=0
 
 . "$NP_BUILDDIR"/dl_build_install.sh
 
