@@ -73,8 +73,8 @@ build_busybox_w32() {
   sed -ri 's/^(CONFIG_TSORT)=y/\1=n/' .config \
   sed -ri 's/^(CONFIG_UNLINK)=y/\1=n/' .config \
   sed -ri 's/^(CONFIG_VI)=y/\1=n/' .config \
-  sed -ri 's/^(CONFIG_XXD)=y/\1=n/' .config \
-  make -j"$BUILD_JOBS" CROSS_COMPILE="${TARGET_HOST}-" || error "build error"
+  sed -ri 's/^(CONFIG_XXD)=y/\1=n/' .config
+  make -j "$BUILD_JOBS" CROSS_COMPILE="${TARGET_HOST}-" || error "build error"
 }
 
 install_busybox_w32() {
