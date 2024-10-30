@@ -1,5 +1,7 @@
-test build for amd64
+x86/arm64: fix build_file() compiling error from trying to run file.exe (windows executable) on non-windows
+test build for x86
 test build for amd64 using llvm-mingw
+test build for x86 using llvm-mingw
 write a test suite to test every package and feature
 general code cleanup
 neptunium base files release
@@ -14,12 +16,13 @@ update download urls for packages:
   llvm-mingw 20241015 (llvm 19.1.2)
   neptunium-base-files w/ release url instead of master head.tar.gz
 retest for amd64 after upgraded pkgs
-test build for x86
+retest for x86 after upgraded pkgs
 vim arm64 support
-better llvm-mingw building support
+better llvm-mingw building support (for arm64 notably)
 test build for arm64
 build_vim(): check if running on windows, if so then set UNDER_CYGWIN=no
 test self build on amd64, x86, arm64
-add armv7 support
+create a release for neptunium
 
+add armv7 support
 when zenithutils is complete, add that to dl_build_install.sh along with mksh/win32 (make an updated, makefile buildable fork) and allow user to choose userland, either busybox-w32 based or zenithutils+mksh based (mksh: make sh.exe alias)
