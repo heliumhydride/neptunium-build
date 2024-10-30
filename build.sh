@@ -160,6 +160,8 @@ info "downloading libarchive"
 download_libarchive
 info "downloading curl"
 download_curl
+info "downloading ca certificates for curl"
+download_ca_certs
 info "downloading file"
 download_file
 info "downloading conemu"
@@ -253,6 +255,8 @@ info "installing libressl"
 install_libressl > "$LOG_FILE"
 info "installing curl"
 install_curl > "$LOG_FILE"
+info "installing ca certificates"
+install_ca_certs > "$LOG_FILE"
 info "installing libgnurx"
 install_libgnurx > "$LOG_FILE"
 info "installing file"
