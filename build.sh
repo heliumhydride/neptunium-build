@@ -34,7 +34,7 @@ success() {
 }
 
 check_installed() {
-  which $1 > /dev/null 2>&1
+  which "$1" > /dev/null 2>&1
   [ "$?" -eq 1 ] && error "$1 command not installed / not found in \$PATH"
 }
 

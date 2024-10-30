@@ -97,7 +97,7 @@ build_libarchive() {
 }
 
 install_libarchive() {
-  cd "$NP_BUILDDIR"/build/libarchive
+  cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
   make install DESTDIR="$NP_BUILDDIR"/install_dir || error "installation error"
   mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdtar.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/tar.exe || error "installation error"
   mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdcpio.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cpio.exe || error "installation error"
@@ -374,8 +374,8 @@ install_vim() {
   else
     gcc_sysroot="$(${TARGET_HOST}-gcc -print-sysroot)"
     cp -v "$gcc_sysroot"/bin/libwinpthread-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
-    [ "$ARCH" = "amd64"] && cp -v "$gcc_sysroot"/lib/libgcc_s_seh-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
-    [ "$ARCH" = "x86"] && cp -v "$gcc_sysroot"/lib/libgcc_s_sjlj-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    [ "$ARCH" = "amd64" ] && cp -v "$gcc_sysroot"/lib/libgcc_s_seh-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    [ "$ARCH" = "x86" ] && cp -v "$gcc_sysroot"/lib/libgcc_s_sjlj-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
     cp -v "$gcc_sysroot"/lib/libstdc++-6.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
   fi
 }
@@ -425,8 +425,7 @@ install_debugbreak() {
 }
 
 install_busybox_alias() {
-  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 busybox bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync getopt grep groups gunzip gzip hd head hexdump httpd iconv id inotifyd install ipcalc jn kill killall lash less ln logname ls lsattr lzcat lzma lzop lzopcat md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts ttysize uname uncompress unexpand uniq unix2dos unlzma unlzop unxz unzip uptime usleep uudecode
-uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
+  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 busybox bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync getopt grep groups gunzip gzip hd head hexdump httpd iconv id inotifyd install ipcalc jn kill killall lash less ln logname ls lsattr lzcat lzma lzop lzopcat md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts ttysize uname uncompress unexpand uniq unix2dos unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
     cp -v "$NP_BUILDDIR"/build/w64devkit/src/bbalias.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/"$prog".exe || error "installation error"
   done
 }
