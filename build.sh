@@ -12,7 +12,6 @@ NP_BUILDDIR="$(pwd)/"
 LOG_FILE="${NP_BUILDDIR}/build.log"
 DOWNLOAD_AGENT="curl"
 BUILD_JOBS="$(nproc)"
-NEW_USERLAND=0
 
 . "$NP_BUILDDIR"/dl_build_install.sh
 
@@ -140,7 +139,7 @@ if [ "$FREE_SOFTWARE_ONLY" = 1 ]; then echo "${ANSI_BLUE}free software only:    
 else echo "${ANSI_BLUE}free software only:     ${ANSI_RED}no${ANSI_NORM}"
 fi
 
-if [ "$NEW_USERLAND" = 1 ]; then echo "${ANSI_BLUE}userland:               ${ANSI_GREEN}busybox-w32${ANSI_NORM}"
+if [ "$NEW_USERLAND" = 0 ]; then echo "${ANSI_BLUE}userland:               ${ANSI_GREEN}busybox-w32${ANSI_NORM}"
 else echo "${ANSI_BLUE}userland:               ${ANSI_RED}zenithutils+mksh/win32${ANSI_NORM}"
 fi
 
