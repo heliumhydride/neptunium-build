@@ -140,6 +140,10 @@ if [ "$FREE_SOFTWARE_ONLY" = 1 ]; then echo "${ANSI_BLUE}free software only:    
 else echo "${ANSI_BLUE}free software only:     ${ANSI_RED}no${ANSI_NORM}"
 fi
 
+if [ "$NEW_USERLAND" = 1 ]; then echo "${ANSI_BLUE}userland:               ${ANSI_GREEN}busybox-w32${ANSI_NORM}"
+else echo "${ANSI_BLUE}userland:               ${ANSI_RED}zenithutils+mksh/win32${ANSI_NORM}"
+fi
+
 [ -n "$X64DBG_CUSTOM_PATH" ] && echo "${ANSI_BLUE}x64dbg custom zip path: ${ANSI_GREEN}${X64DBG_CUSTOM_PATH}${ANSI_NORM}"
 [ -n "$CONEMU_CUSTOM_PATH" ] && echo "${ANSI_BLUE}conemu custom zip path: ${ANSI_GREEN}${CONEMU_CUSTOM_PATH}${ANSI_NORM}"
 
