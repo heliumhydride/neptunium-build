@@ -1,4 +1,3 @@
-use custom config for busybox and redo busybox_alias_install with new program names (to prevent busybox tar/make/cpio from overtaking libarchive/gmake)
 curl https not working (where do we get ssl certificates ?)
 remove background cmd when running neptunium.cmd (not neptunium_here.cmd)
 use a windows preinstalled font by default for conemu-neptunium.xml (for neptunium-base-files)

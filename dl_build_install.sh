@@ -51,12 +51,28 @@ download_busybox_w32() {
 build_busybox_w32() {
   cd "$NP_BUILDDIR"/build/busybox-w32 || error "directory error"
   case $ARCH in
-    amd64) CROSS_COMPILE="${TARGET_HOST}-" make mingw64_defconfig || error "build error";;
-    x86)   CROSS_COMPILE="${TARGET_HOST}-" make mingw32_defconfig || error "build error";;
+    amd64|x86) CROSS_COMPILE="${TARGET_HOST}-" make mingw64u_defconfig || error "build error";;
     arm64) CROSS_COMPILE="${TARGET_HOST}-" make mingw64a_defconfig || error "build error";;
   esac
   # TODO patch config accordingly to neptunium64_config
-  make -j"$BUILD_JOBS" || error "build error"
+  # patch config with sed, w64devkit style
+  sed -ri 's/^(CONFIG_AR)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_TAR)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_CPIO)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_DPKG\w*)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_FTP\w*)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_LINK)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_MAN)=y/\1=n/' .config \ # hmmm, maybe keep man? idk
+  sed -ri 's/^(CONFIG_MAKE)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_PDPMAKE)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_RPM\w*)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_STRINGS)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_TEST2)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_TSORT)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_UNLINK)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_VI)=y/\1=n/' .config \
+  sed -ri 's/^(CONFIG_XXD)=y/\1=n/' .config \
+  make -j"$BUILD_JOBS" CROSS_COMPILE="${TARGET_HOST}-" || error "build error"
 }
 
 install_busybox_w32() {
@@ -398,7 +414,8 @@ install_debugbreak() {
 }
 
 install_busybox_alias() {
-  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync ftpget ftpput getopt grep groups gunzip gzip hd head hexdump httpd id inotifyd install ipcalc jn kill killall lash less link ln logname ls lsattr lzcat lzma lzop lzopcat man md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts tsort ttysize uname unexpand uniq unix2dos unlink unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
+  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 busybox bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync getopt grep groups gunzip gzip hd head hexdump httpd iconv id inotifyd install ipcalc jn kill killall lash less ln logname ls lsattr lzcat lzma lzop lzopcat md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts ttysize uname uncompress unexpand uniq unix2dos unlzma unlzop unxz unzip uptime usleep uudecode
+uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
     cp -v "$NP_BUILDDIR"/build/w64devkit/src/bbalias.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/"$prog".exe || error "installation error"
   done
 }
