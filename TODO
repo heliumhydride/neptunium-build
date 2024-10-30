@@ -1,6 +1,6 @@
 (fixed ? needs testing) vimdll/clang building issues
 (fixed ? needs testing) curl https not working (where do we get ssl certificates ?)
-remove background cmd when running neptunium.cmd (not neptunium_here.cmd)
+remove background cmd when running neptunium.cmd (not neptunium_here.cmd) (for neptunium-base-files) (potential fix: use 'start' or 'start /b' command to startup conemu in common/bin/conemu.cmd)
 use a windows preinstalled font by default for conemu-neptunium.xml (for neptunium-base-files)
 test build for amd64
 test build for amd64 using llvm-mingw
