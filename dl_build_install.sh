@@ -7,6 +7,7 @@ VIM_URL="https://github.com/vim/vim/archive/v9.1.0660/vim-9.1.0660.tar.gz"
 FILE_URL="http://ftp.astron.com/pub/file/file-5.45.tar.gz"
 LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
 CURL_URL="https://curl.se/download/curl-8.8.0.tar.xz"
+CACERTS_URL="https://curl.se/ca/cacert.pem"
 W64DEVKIT_URL="https://github.com/skeeto/w64devkit/archive/refs/tags/v1.23.0.tar.gz"
 PDCURSES_URL="https://github.com/wmcbrine/PDCurses/archive/refs/tags/3.9.tar.gz"
 # TODO add release on neptunium-base-files and use that instead of directly using the master branch
@@ -148,8 +149,7 @@ build_curl() {
               --enable-threaded-resolver \
               --host="$TARGET_HOST" \
               --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
-              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
-              --with-ca-path="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "build error"
+              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
 
@@ -167,7 +167,7 @@ download_ca_certs() {
 
 install_ca_certs() {
   mkdir -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "installation error"
-  cp -v "$NP_BUILDDIR"/download/cacert.pem "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs/ca-bundle.crt || error "installation error"
+  cp -v "$NP_BUILDDIR"/download/cacert.pem "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/curl-ca-bundle.crt || error "installation error"
 }
 
 # libgnurx (required for File)
