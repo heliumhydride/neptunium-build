@@ -1,8 +1,9 @@
-(fixed ?) vimdll/clang building issues
-(fixed ?) curl https not working (where do we get ssl certificates ?)
+(fixed ? needs testing) vimdll/clang building issues
+(fixed ? needs testing) curl https not working (where do we get ssl certificates ?)
 remove background cmd when running neptunium.cmd (not neptunium_here.cmd)
 use a windows preinstalled font by default for conemu-neptunium.xml (for neptunium-base-files)
 test build for amd64
+test build for amd64 using llvm-mingw
 write a test suite to test every package and feature
 general code cleanup
 neptunium base files release
@@ -16,13 +17,13 @@ update download urls for packages:
   x64dbg snapshot_2024-10-18_19-09
   llvm-mingw 20241015 (llvm 19.1.2)
   neptunium-base-files w/ release url instead of master head.tar.gz
-retest after upgraded pkgs
+retest for amd64 after upgraded pkgs
 test build for x86
 vim arm64 support
 better llvm-mingw building support
 test build for arm64
-build_vim: check if running on windows, if so then set UNDER_CYGWIN=no
+build_vim(): check if running on windows, if so then set UNDER_CYGWIN=no
 test self build on amd64, x86, arm64
 add armv7 support
 
-when zenithutils is complete, add that to dl_build_install.sh along with mksh/win32 (make an updated, makefile buildable fork) and allow user to choose userland, either busybox-w32 based or zenithutils+mksh based
+when zenithutils is complete, add that to dl_build_install.sh along with mksh/win32 (make an updated, makefile buildable fork) and allow user to choose userland, either busybox-w32 based or zenithutils+mksh based (mksh: make sh.exe alias)

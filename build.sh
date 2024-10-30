@@ -42,12 +42,13 @@ print_usage() {
   echo "Neptunium Build Script by heliumhydride"
   echo "usage: build.sh [OPTIONS]"
   echo "options:"
-  echo "  -a, --arch [neptunium_arch]: architecture to build, amd64, x86, or arm64"
+  echo "  -a, --arch [neptunium_arch]: architecture to build, amd64, x86, or arm64*"
   echo "  -j, --jobs [num. of jobs]:   use make with n jobs (default: number of logical cpus)"
   echo "  -h, --help: shows this help"
   echo "  -c, --clean: cleanup downloads, build files and output zips"
   echo "  -v, --verbose: output commands to stdout, not log file (overrides -o)"
   echo "  -o, --output-log [LOG_FILE]: output to log"
+  echo "  -z, --use-zenithutils-mksh: Use zenithutils+mksh/win32 as core userland instead of busybox-w32**"
   echo "  --x64dbg [custom_zip]: Use a custom-built version of x64dbg (must be same directory structure as in the snapshots of x64dbg)"
   echo "  --conemu [custom_7z]: Use a custom-built version of conemu (must be same directory structure as in the ConEmuPack.*.7z)"
   echo "  --no-prebuilt-llvm: Build llvm-mingw instead of pulling a binary (VERY LONG!)"
@@ -55,7 +56,8 @@ print_usage() {
   echo "  --dl-agent [program]: use [program] to download files, default is curl (supported: curl,wget)"
   echo ""
   echo "you can edit ${NP_BUILDDIR}dl_build_install.sh to change URLs of downloads, build flags, etc..."
-  echo "NOTE: arm64 building is UNTESTED"
+  echo "*  arm64 building is very very experimental and prob wont work..."
+  echo "** zenithutils is a more complete, more BSD-like alternative to busybox/coreutils... intended to be mostly platform independent by design, but the default busybox is very much recommended as it is much more well tested than z.u."
   exit 1
 }
 
@@ -73,6 +75,7 @@ while :; do
     -o|--output-log) shift; LOG_FILE="$1";;
     -v|--verbose) VERBOSE=1; LOG_FILE="/dev/stdout";;
     -c|--clean) _clean_mode=1;;
+    -z|--use-zenithutils-mksh) NEW_USERLAND=1;;
     --) shift; break;;
     '') break;;
     *) print_usage;;
@@ -284,7 +287,11 @@ info "installing neptunium-base-files"
 install_neptunium_base
 
 info "creating distribution zip"
-ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
+if [ "$NEW_USERLAND" = 1 ]; then
+  ZIPNAME="neptunium-${ARCH}zu-$(date +%Y.%m.%d).7z"
+else
+  ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
+fi
 
 7z a -mx7 -r "$NP_BUILDDIR"/output/"$ZIPNAME" "$NP_BUILDDIR"/install_dir/* || error "creating distribution zip failed"
 success "enjoy your new neptunium $ARCH build at $NP_BUILDDIR/output/$ZIPNAME !"
