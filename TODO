@@ -1,5 +1,3 @@
-(fixed ? needs testing) vimdll/clang building issues
-(fixed ? needs testing) curl https not working (where do we get ssl certificates ?)
 test build for amd64
 test build for amd64 using llvm-mingw
 write a test suite to test every package and feature
