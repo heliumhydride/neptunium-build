@@ -313,19 +313,19 @@ download_vim() {
 
 build_vim() {
   cd "$NP_BUILDDIR"/build/vim/src || error "directory error"
-  make -f Make_ming.mak \
-  STATIC_STDCPLUS=yes \
-  FEATURES=HUGE \
-  GUI=yes \
-  OLE=yes \
-  NETBEANS=no \
-  CROSS_COMPILE=${TARGET_HOST}- \
-  CROSS=yes \
-  HAS_GCC_EH=no \
-  VIMDLL=yes \
-  WINVER=0x0601 \
-  UNDER_CYGWIN=yes \
-  -j"$BUILD_JOBS" || error "build error"
+  vim_common_build_flags="FEATURES=HUGE GUI=yes OLE=yes NETBEANS=no CROSS_COMPILE=${TARGET_HOST}- CROSS=yes HAS_GCC_EH=no VIMDLL=yes WINVER=0x0601 UNDER_CYGWIN=yes"
+  if [ "$BUILD_WITH_CLANG" = 1 ]; then
+    make -f Make_ming.mak \
+    $vim_common_build_flags \
+    CC=${TARGET_HOST}-clang \
+    CXX=${TARGET_HOST}-clang++ \
+    -j"$BUILD_JOBS" || error "build error"
+  else # only possibility left is gcc; tcc isn't supported because microsoft went like "muh c++ for muh directx !!!!"
+    make -f Make_ming.mak \
+    STATIC_STDCPLUS=yes \
+    $vim_common_build_flags \
+    -j"$BUILD_JOBS" || error "build error"
+  fi
 }
 
 install_vim() {
@@ -335,6 +335,22 @@ install_vim() {
   cp -v vimrun.exe gvim.exe vim.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/ || error "installation error"
   cp -v xxd/xxd.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
   # the vi/vim/gvim launchers are already installed by neptunium-base-files
+  # ---- install the required dlls
+  # TODO vim arm64 support
+  [ "$ARCH" = "amd64" ] && cp -v vim64.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
+  [ "$ARCH" = "x86" ] && cp -v vim32.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
+  if [ "$BUILD_WITH_CLANG" = 1 ]; then
+    llvm_install_dir="$(${TARGET_HOST}-clang -v 2>&1|grep InstalledDir|cut -f2 -d' ')"/..
+    # use -n because it might be installed my llvm-mingw, but it's just to be safe
+    cp -nv "$llvm_install_dir"/"$TARGET_HOST"/bin/libc++.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    cp -nv "$llvm_install_dir"/"$TARGET_HOST"/bin/libunwind.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+  else
+    gcc_sysroot="$(${TARGET_HOST}-gcc -print-sysroot)"
+    cp -v "$gcc_sysroot"/bin/libwinpthread-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    [ "$ARCH" = "amd64"] && cp -v "$gcc_sysroot"/lib/libgcc_s_seh-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    [ "$ARCH" = "x86"] && cp -v "$gcc_sysroot"/lib/libgcc_s_sjlj-1.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+    cp -v "$gcc_sysroot"/lib/libstdc++-6.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/
+  fi
 }
 
 # pkg-config, vc++filt, debugbreak, busybox aliases from w64devkit

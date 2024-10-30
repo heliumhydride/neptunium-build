@@ -109,6 +109,8 @@ case "$ARCH" in
          BUILD_PREFIX="/neptuniumarm64";;
 esac
 
+[ "${TARGET_HOST}-gcc -v 2>&1 |head -n1|cut -f1 -d' '" = "clang" ] && BUILD_WITH_CLANG=1
+
 check_installed "$TARGET_HOST"-gcc
 check_installed "$TARGET_HOST"-g++
 
