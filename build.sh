@@ -302,3 +302,4 @@ fi
 
 7z a -mx7 -r "$NP_BUILDDIR"/output/"$ZIPNAME" "$NP_BUILDDIR"/install_dir/* || error "creating distribution zip failed"
 success "enjoy your new neptunium $ARCH build at $NP_BUILDDIR/output/$ZIPNAME !"
+info "if you want to test neptunium, run np_test_suite.sh on the target machine (not here)"
