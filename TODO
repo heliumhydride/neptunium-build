@@ -1,11 +1,10 @@
-x86/arm64: fix build_file() compiling error from trying to run file.exe (windows executable) on non-windows
-test build for x86
-test build for amd64 using llvm-mingw
-test build for x86 using llvm-mingw
-write a test suite to test every package and feature
+write a test suite to test every package and feature (/neptunium*/bin/NP_TEST_SUITE.sh), add message at end of build to inform how to test neptunium
+test build for amd64 using llvm-mingw (+ run test suite)
+test build for x86 using llvm-mingw (+ run test suite)
+allow build to restart after a build fail (avoids rebuilding and redownloading and reinstalling half of the packages everytime)
 general code cleanup
 neptunium base files release
-add git and 7zip
+add git and 7zip (for self-building support)
 update download urls for packages:
   w64devkit 2.0.0
   busybox-w32 FRP-5467-g9376eebd8

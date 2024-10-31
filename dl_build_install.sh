@@ -213,13 +213,15 @@ install_libgnurx() {
 download_file() {
   cd "$NP_BUILDDIR"/download || error "directory error"
   $_dl_cmd "$FILE_URL" || error "download error"
-  tar zxvf "$NP_BUILDDIR"/download/file-*.tar.gz -C "$NP_BUILDDIR"/build
-  mv -v "$NP_BUILDDIR"/build/file-* "$NP_BUILDDIR"/build/file
+  tar zxvf "$NP_BUILDDIR"/download/file-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/file-* "$NP_BUILDDIR"/build/file || error "extraction error"
 }
 
 build_file() {
   cd "$NP_BUILDDIR"/build/file || error "directory error"
   patch -Np0 < "$NP_BUILDDIR"/patches/00-file-cdf_ctime-fix.patch || error "patch error" # fixes build error with mingw64-gcc 14.2.0
+  patch -Np0 < "$NP_BUILDDIR"/patches/01-file-fix-cross-compile.patch || error "patch error"
+  # TODO might affect self-building capabilities ? does file use this besides deciding wether cross-compiling is running or not ?
   CFLAGS="-I${NP_BUILDDIR}/host/include" \
   LDFLAGS="-L${NP_BUILDDIR}/host/lib" \
   ./configure --prefix="$BUILD_PREFIX" \
@@ -227,6 +229,7 @@ build_file() {
               --enable-shared \
               --libdir="$BUILD_PREFIX"/"$TARGET_HOST"/lib \
               --includedir="$BUILD_PREFIX"/"$TARGET_HOST"/include \
+              --build=x86_64-linux \
               --host="$TARGET_HOST" \
               --disable-zlib \
               --disable-bzlib \
