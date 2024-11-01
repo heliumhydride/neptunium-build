@@ -7,6 +7,7 @@ allow build to restart after a build fail (avoids rebuilding and redownloading a
 general code cleanup
 neptunium base files release
 add git and 7zip (for self-building support)
+add cppcheck + patch from w64devkit maybe
 update download urls for packages:
   w64devkit 2.0.0
   busybox-w32 FRP-5467-g9376eebd8
