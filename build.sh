@@ -294,11 +294,10 @@ info "installing neptunium-base-files"
 install_neptunium_base
 
 info "creating distribution zip"
-if [ "$NEW_USERLAND" = 1 ]; then
-  ZIPNAME="neptunium-${ARCH}zu-$(date +%Y.%m.%d).7z"
-else
-  ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
-fi
+ZIPNAME="neptunium-$ARCH-$(date +%Y.%m.%d).7z"
+[ "$FREE_SOFTWARE_ONLY" = 1 ] && ZIPNAME="${ZIPNAME}_fre"
+[ "$NEW_USERLAND" = 1 ] && ZIPNAME="${ZIPNAME}_zu"
+ZIPNAME="${ZIPNAME}-$(date +%Y.%m.%d).7z"
 
 7z a -mx7 -r "$NP_BUILDDIR"/output/"$ZIPNAME" "$NP_BUILDDIR"/install_dir/* || error "creating distribution zip failed"
 success "enjoy your new neptunium $ARCH build at $NP_BUILDDIR/output/$ZIPNAME !"
