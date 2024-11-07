@@ -1,4 +1,3 @@
-move neptunium test suite to this repo
 write a test suite to test every package and feature (/neptunium*/bin/np_test_suite.sh)
 fix tar hanging .gz/.xz/... unless we first use zcat/xzcat/...
 test build for amd64 using llvm-mingw (+ run test suite)
