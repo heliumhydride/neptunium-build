@@ -52,12 +52,31 @@ while :; do
   shift
 done
 
-# TODO test nasm; openssl; make; pkg-config; vc++filt; debugbreak; pdcurses; x64dbg; dependency walker
+# TODO test nasm; openssl; make; pkg-config; vc++filt; debugbreak; pdcurses; x64dbg; dependency walker; llvm-strings, llvm-ar, llvm-objcopy, llvm-objdump, lldb?, win64-lld, libc++/libunwind
+
+info "testing nasm ----"
+cat >> .npts_tmp.asm << EOF
+    global  _main
+    extern  _printf
+
+    section .text
+_main:
+    push    message
+    call    _printf
+    add     esp, 4
+    ret
+message:
+    db  'Hello, World', 10, 0
+EOF
+nasm -fwin32 -o .npts_test.o || error "nasm test failed"
+cc .npts_test.o -o .npts_test || error "nasm test failed"
+./.npts_test || error "nasm test failed"
+rm .npts_test .npts_test.o
 
 info "testing curl ----"
 curl https://example.com || error "curl test failed"
 
-info "testing c compiler ----"
+info "testing clang + lld ----"
 # TODO test other tools of llvm
 cat >> .npts_tmp.c << EOF
 #define _XOPEN_SOURCE   600
