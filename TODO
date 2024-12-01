@@ -11,10 +11,10 @@ update download urls for packages:
   w64devkit 2.0.0
   busybox-w32 FRP-5467-g9376eebd8
   libarchive 3.7.7
-  curl 8.10.1
+  curl 8.11.0
   libressl 4.0.0
-  x64dbg snapshot_2024-10-18_19-09
-  llvm-mingw 20241015 (llvm 19.1.2)
+  x64dbg snapshot_2024-12-01_15-19
+  llvm-mingw 20241119 (llvm 19.1.4)
   neptunium-base-files w/ release url instead of master head.tar.gz
 retest for amd64 after upgraded pkgs
 retest for x86 after upgraded pkgs
