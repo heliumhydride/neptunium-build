@@ -1,10 +1,10 @@
 #!/bin/sh
 
 NASM_URL="https://www.nasm.us/pub/nasm/stable/nasm-2.16.03.tar.xz"
-MAKE_URL="https://ftpmirror.gnu.org/make/make-4.4.1.tar.gz"
+MAKE_URL="https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz"
 BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5398-g89ae34445.tar.gz"
 VIM_URL="https://github.com/vim/vim/archive/v9.1.0660/vim-9.1.0660.tar.gz"
-FILE_URL="http://ftp.astron.com/pub/file/file-5.45.tar.gz"
+FILE_URL="http://ftp.astron.com/pub/file/file-5.46.tar.gz"
 LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
 CURL_URL="https://curl.se/download/curl-8.8.0.tar.xz"
 CACERTS_URL="https://curl.se/ca/cacert.pem"
