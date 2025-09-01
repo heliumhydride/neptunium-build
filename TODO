@@ -1,4 +1,5 @@
 write a test suite to test every package and feature (/neptunium*/bin/np_test_suite.sh)
+ctrl-c causes 'Terminate batch script (Y/N)?' and input bugs sometimes
 fix tar hanging .gz/.xz/... unless we first use zcat/xzcat/...
 test build for amd64 using llvm-mingw (+ run test suite)
 test build for x86 using llvm-mingw (+ run test suite)
