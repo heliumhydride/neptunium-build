@@ -8,13 +8,13 @@ neptunium base files release
 add git and 7zip (for self-building support)
 add cppcheck + patch from w64devkit maybe
 update download urls for packages:
-  w64devkit 2.0.0
-  busybox-w32 FRP-5467-g9376eebd8
-  libarchive 3.7.7
-  curl 8.11.0
-  libressl 4.0.0
-  x64dbg snapshot_2024-12-01_15-19
-  llvm-mingw 20241119 (llvm 19.1.4)
+  w64devkit 2.4.0
+  busybox-w32 FRP-5579-g5749feb35
+  libarchive 3.8.1
+  curl 8.15.0
+  libressl 4.1.0
+  x64dbg snapshot_2025-08-19_19-40 
+  llvm-mingw 20250826 (llvm 21.1.0)
   neptunium-base-files w/ release url instead of master head.tar.gz
 retest for amd64 after upgraded pkgs
 retest for x86 after upgraded pkgs
