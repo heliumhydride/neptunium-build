@@ -2,31 +2,31 @@
 
 NASM_URL="https://www.nasm.us/pub/nasm/stable/nasm-2.16.03.tar.xz"
 MAKE_URL="https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz"
-BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5398-g89ae34445.tar.gz"
-VIM_URL="https://github.com/vim/vim/archive/v9.1.0660/vim-9.1.0660.tar.gz"
+BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5579-g5749feb35.tar.gz"
+VIM_URL="https://github.com/vim/vim/archive/v9.1.0821/vim-9.1.0821.tar.gz"
 FILE_URL="http://ftp.astron.com/pub/file/file-5.46.tar.gz"
 LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
-CURL_URL="https://curl.se/download/curl-8.8.0.tar.xz"
+CURL_URL="https://curl.se/download/curl-8.15.0.tar.xz"
 CACERTS_URL="https://curl.se/ca/cacert.pem"
-W64DEVKIT_URL="https://github.com/skeeto/w64devkit/archive/refs/tags/v1.23.0.tar.gz"
+W64DEVKIT_URL="https://github.com/skeeto/w64devkit/archive/refs/tags/v2.4.0.tar.gz"
 PDCURSES_URL="https://github.com/wmcbrine/PDCurses/archive/refs/tags/3.9.tar.gz"
 # TODO add release on neptunium-base-files and use that instead of directly using the master branch
 NEPTUNIUM_BASE_URL="https://github.com/heliumhydride/neptunium-base-files/archive/refs/heads/master.tar.gz"
 
 
-LIBRESSL_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.9.2.tar.gz"
+LIBRESSL_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-4.1.0.tar.gz"
 LIBGNURX_URL="https://downloads.sourceforge.net/mingw/Other/UserContributed/regex/mingw-regex-2.5.1/mingw-libgnurx-2.5.1-src.tar.gz"
 
 DEPENDS_X86_URL="https://www.dependencywalker.com/depends22_x86.zip"
 DEPENDS_AMD64_URL="https://www.dependencywalker.com/depends22_x64.zip"
 
 CONEMU_URL="https://github.com/Maximus5/ConEmu/releases/download/v23.07.24/ConEmuPack.230724.7z"
-X64DBG_URL="https://downloads.sourceforge.net/project/x64dbg/snapshots/snapshot_2024-07-21_20-36.zip"
+X64DBG_URL="https://github.com/x64dbg/x64dbg/releases/download/2025.08.19/snapshot_2025-08-19_19-40.zip"
 
-LLVM_MINGW_SRC_URL="https://github.com/mstorsjo/llvm-mingw/archive/refs/tags/20240619.tar.gz"
-LLVM_MINGW_BIN_AMD64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20240619/llvm-mingw-20240619-msvcrt-x86_64.zip"
-LLVM_MINGW_BIN_X86_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20240619/llvm-mingw-20240619-msvcrt-i686.zip"
-LLVM_MINGW_BIN_ARM64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20240619/llvm-mingw-20240619-ucrt-aarch64.zip"
+LLVM_MINGW_SRC_URL="https://github.com/mstorsjo/llvm-mingw/archive/refs/tags/20250826.tar.gz"
+LLVM_MINGW_BIN_AMD64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-msvcrt-x86_64.zip"
+LLVM_MINGW_BIN_X86_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-msvcrt-i686.zip"
+LLVM_MINGW_BIN_ARM64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-ucrt-aarch64.zip"
 
 # neptunium base files
 download_neptunium_base() {
@@ -151,7 +151,8 @@ build_curl() {
               --enable-threaded-resolver \
               --host="$TARGET_HOST" \
               --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
-              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib || error "build error"
+              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
+              --without-libpsl || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
 

@@ -1,6 +1,7 @@
 write a test suite to test every package and feature (/neptunium*/bin/np_test_suite.sh)
 ctrl-c causes 'Terminate batch script (Y/N)?' and input bugs sometimes
-fix tar hanging .gz/.xz/... unless we first use zcat/xzcat/...
+add zlib, zstd, bzip2, lzma for libarchive, could fix bug below in theory
+-- fix tar hanging .gz/.xz/... unless we first use zcat/xzcat/...
 test build for amd64 using llvm-mingw (+ run test suite)
 test build for x86 using llvm-mingw (+ run test suite)
 allow build to restart after a build fail (avoids rebuilding and redownloading and reinstalling half of the packages everytime)
@@ -9,15 +10,8 @@ neptunium base files release
 add git and 7zip (for self-building support)
 add cppcheck + patch from w64devkit maybe
 update download urls for packages:
-  w64devkit 2.4.0
-  busybox-w32 FRP-5579-g5749feb35
-  libarchive 3.8.1
-  curl 8.15.0
-  libressl 4.1.0
-  x64dbg snapshot_2025-08-19_19-40 
-  llvm-mingw 20250826 (llvm 21.1.0)
+  libarchive 3.8.1 (not bumped yet due to Windows 7 not having CreateFile2, which it seems to want for some reason, maybe i set up the build flags wrong for this version?)
   neptunium-base-files w/ release url instead of master head.tar.gz
-retest for amd64 after upgraded pkgs
 retest for x86 after upgraded pkgs
 vim arm64 support
 better llvm-mingw building support (for arm64 notably)
