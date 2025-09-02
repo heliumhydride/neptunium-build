@@ -12,6 +12,7 @@ A handy development environment for Windows 7+
 - Extract it to the root of any drive (C:/, D:/, ...)
   - If 7-Zip / WinRAR asks you if you want to replace files, say 'No to All'
 - Run neptunium.cmd in the extracted directory
+  - Note: you might need the [visual c++ redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to run some of the software.
 
 ## Building neptunium
 ### Build requirements
