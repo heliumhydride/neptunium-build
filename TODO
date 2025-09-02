@@ -1,4 +1,5 @@
 write a test suite to test every package and feature (/neptunium*/bin/np_test_suite.sh)
+lldb not working on windows 7, missing dll? (I did install vc runtime)
 ctrl-c causes 'Terminate batch script (Y/N)?' and input bugs sometimes
 add zlib, zstd, bzip2, lzma for libarchive, could fix bug below in theory
 -- fix tar hanging .gz/.xz/... unless we first use zcat/xzcat/...
@@ -12,7 +13,6 @@ add cppcheck + patch from w64devkit maybe
 update download urls for packages:
   libarchive 3.8.1 (not bumped yet due to Windows 7 not having CreateFile2, which it seems to want for some reason, maybe i set up the build flags wrong for this version?)
   neptunium-base-files w/ release url instead of master head.tar.gz
-retest for x86 after upgraded pkgs
 vim arm64 support
 better llvm-mingw building support (for arm64 notably)
 test build for arm64
