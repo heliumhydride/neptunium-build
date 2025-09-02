@@ -274,7 +274,7 @@ download_llvm() {
   cd "$NP_BUILDDIR"/download || error "directory error"  
   if [ "$BUILD_LLVM" = 1 ]; then
     $_dl_cmd "$LLVM_MINGW_SRC_URL" || error "download error"
-    tar zxvf "$NP_BUILDDIR"/download/llvm-mingw-*.tar.gz || error "extraction error"
+    tar zxvf "$NP_BUILDDIR"/download/llvm-mingw-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
   else
     case "$ARCH" in
       amd64) $_dl_cmd "$LLVM_MINGW_BIN_AMD64_URL" || error "download error";;
@@ -287,7 +287,7 @@ download_llvm() {
 }
 
 build_llvm() {
-  cd "$NP_BUILDDIR"/llvm-mingw || error "directory error"
+  cd "$NP_BUILDDIR"/build/llvm-mingw || error "directory error"
   # also installs llvm-mingw in the process, which is quite handy
   ./build-all.sh --host="$TARGET_HOST" "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/ || error "build/installation error"
 }
