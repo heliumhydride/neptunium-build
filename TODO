@@ -1,5 +1,5 @@
-
-
+make download lists for curl, wget, aria2c
+support aria2 download agent
 write a test suite to test every package and feature (/neptunium*/bin/np_test_suite.sh)
 lldb not working on windows 7, missing dll? (I did install vc runtime)
 ctrl-c causes 'Terminate batch script (Y/N)?' and input bugs sometimes
