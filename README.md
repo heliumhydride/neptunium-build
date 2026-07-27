@@ -18,16 +18,21 @@ A handy development environment for Windows 7+
 ### Build requirements
 - A Unix-like environment like Linux, MSYS2, FreeBSD, w64devkit, ... (Or Neptunium itself lol)
 - GNU make
-- p7zip, tar, gzip, xz, unzip
+- 7zip, tar, gzip, xz, unzip
 - A mingw toolchain (gcc or llvm)
+- A command-line download tool (supported are `curl`, `wget` and `aria2`)
 
 ### The building process
 - Clone this repository:
 ```git clone https://github.com/heliumhydride/neptunium-build```
-- Go into the `neptunium-build`directory
+- Go into the `neptunium-build` directory
 - To build for `amd64` architecture (corresponds to `x86_64`), run
 ```./build.sh -a amd64```
 - (Run `./build.sh -h` to see available architectures, build options, ...)
+- An average build command could look like:
+```./build.sh -a x86 -j 12 -d 5 --dl-agent aria2 --free --no-prebuilt-llvm -o /tmp/neptunium32.log```
+- In case you need to reset the output directories:
+```./build.sh -c```
 
 ## Credits
 - [w64devkit](https://github.com/skeeto/w64devkit), a few files from this project are used and the main inspiration for this project
