@@ -19,6 +19,8 @@ vim arm64 support
 better llvm-mingw building support (for arm64 notably)
 test build for arm64
 build_vim(): check if running on windows, if so then set UNDER_CYGWIN=no
+hmm reading man pages would be nice (install a man page reader)
+  + maybe mandoc but it wants nanosleep which is not on mingw appararently
 test self build on amd64, x86, arm64
 create a release for neptunium
 
