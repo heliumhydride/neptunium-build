@@ -1,0 +1,1 @@
+https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-msvcrt-i686.zip

@@ -41,8 +41,9 @@ print_usage() {
   echo "Neptunium Build Script by heliumhydride"
   echo "usage: build.sh [OPTIONS]"
   echo "options:"
-  echo "  -a, --arch [neptunium_arch]: architecture to build, amd64, x86, or arm64*"
-  echo "  -j, --jobs [num. of jobs]:   use make with n jobs (default: number of logical cpus)"
+  echo "  -a, --arch [neptunium_arch]:    architecture to build, amd64, x86, or arm64*"
+  echo "  -j, --jobs [num. of jobs]:      use make with n jobs (default: number of logical cpus)"
+  echo "  -d, --downloads [num. of jobs]: number of allowed simulatenous connections (can be one to disable parallel downloading)"
   echo "  -h, --help: shows this help"
   echo "  -c, --clean: cleanup downloads, build files and output zips"
   echo "  -v, --verbose: output commands to stdout, not log file (overrides -o), equivalent to '-o /dev/stdout'"
@@ -52,7 +53,7 @@ print_usage() {
   echo "  --conemu [custom_7z]: Use a custom-built version of conemu (must be same directory structure as in the ConEmuPack.*.7z)"
   echo "  --no-prebuilt-llvm: Build llvm-mingw instead of pulling a binary (VERY LONG!)"
   echo "  --free: use FOSS tools only (no dependency walker)"
-  echo "  --dl-agent [program]: use [program] to download files, default is curl (supported are curl & wget, if you need support for eg. aria2, ask in an issue and i'll add it to the TODO list)"
+  echo "  --dl-agent [program]: use [program] to download files, default is curl (supported: curl,wget,aria2)"
   echo ""
   echo "you can edit ${NP_BUILDDIR}dl_build_install.sh to change URLs of downloads, build flags, etc..."
   echo "*  arm64 building is very very experimental and prob wont work..."
@@ -66,6 +67,7 @@ while :; do
   case "$1" in
     -a|--arch) shift; ARCH=$1;;
     -j|--jobs) shift; BUILD_JOBS=$1;;
+    -d|--downloads) shift; DOWNLOAD_JOBS=$1;;
     --no-prebuilt-llvm) BUILD_LLVM=1;;
     --x64dbg) shift; X64DBG_CUSTOM_PATH=$1;;
     --conemu) shift; CONEMU_CUSTOM_PATH=$1;;
@@ -95,7 +97,6 @@ done
   exit "$clean_fail"
 }
 
-check_installed "$DOWNLOAD_AGENT"
 check_installed tar
 check_installed gzip
 check_installed xz
@@ -122,10 +123,11 @@ case "$ARCH" in
 esac
 
 case "$DOWNLOAD_AGENT" in
-  curl) _dl_cmd="curl -LJO";;
-  wget) _dl_cmd="wget";;
+  curl|wget) _dl_cmd="$DOWNLOAD_AGENT";;
+  aria2) _dl_cmd="aria2c";;
   *) error "unsupported download agent $DOWNLOAD_AGENT";;
 esac
+check_installed "$_dl_cmd"
 
 echo
 echo "${ANSI_BLUE}arch:                   ${ANSI_GREEN}${ARCH}${ANSI_NORM}"
@@ -152,47 +154,26 @@ case "$_proceed" in [nN]) exit 0;; esac
 
 
 info "ok, downloading needed files"
+download_sources
 
 # ---DOWNLOADING---
 # base system tools
-info "downloading neptunium-base-files"
-download_neptunium_base
-info "downloading busybox-w32"
-download_busybox_w32
-info "downloading libarchive"
-download_libarchive
-info "downloading curl"
-download_curl
-info "downloading ca certificates for curl"
-download_ca_certs
-info "downloading file"
-download_file
-info "downloading conemu"
-download_conemu
-# development tools
-info "downloading llvm-mingw"
-download_llvm
-info "downloading nasm"
-download_nasm
-info "downloading gmake"
-download_gmake
-info "downloading vim"
-download_vim
-info "downloading w64devkit (pkg-config, vc++filt, debugbreak)"
-download_w64devkit
-info "downloading libressl"
-download_libressl
-info "downloading/copying x64dbg"
-download_x64dbg
-[ "$FREE_SOFTWARE_ONLY" = 1 ] || {
-  info "downloading dependency walker"
-  download_depends
-}
-# additional libs
-info "downloading pdcurses"
-download_pdcurses
-info "downloading host-libgnurx"
-download_host_libgnurx
+info "extracting sources"
+extract_neptunium_base > "$LOG_FILE"
+extract_busybox_w32 > "$LOG_FILE"
+extract_libarchive > "$LOG_FILE"
+extract_aria2 > "$LOG_FILE"
+extract_nasm > "$LOG_FILE"
+extract_gmake > "$LOG_FILE"
+extract_w64devkit > "$LOG_FILE"
+extract_pdcurses > "$LOG_FILE"
+extract_vim > "$LOG_FILE"
+extract_host_libgnurx > "$LOG_FILE"
+extract_file > "$LOG_FILE"
+extract_llvm > "$LOG_FILE"
+extract_conemu > "$LOG_FILE"
+extract_x64dbg > "$LOG_FILE"
+[ "$FREE_SOFTWARE_ONLY" = 1 ] || (extract_depends > "$LOG_FILE")
 
 info "creating base directory structure"
 # create base directory structure
@@ -206,10 +187,6 @@ info "building pdcurses"
 build_pdcurses > "$LOG_FILE"
 info "installing pdcurses"
 install_pdcurses > "$LOG_FILE"
-info "building host-libressl"
-build_host_libressl > "$LOG_FILE"
-info "installing host-libressl"
-install_host_libressl > "$LOG_FILE"
 info "building libgnurx"
 build_libgnurx > "$LOG_FILE"
 info "installing host-libgnurx"
@@ -220,10 +197,8 @@ info "building busybox-w32"
 build_busybox_w32 > "$LOG_FILE"
 info "building libarchive"
 build_libarchive > "$LOG_FILE"
-info "building libressl"
-build_libressl > "$LOG_FILE"
-info "building curl"
-build_curl > "$LOG_FILE"
+info "building aria2"
+build_aria2 > "$LOG_FILE"
 info "building file"
 build_file > "$LOG_FILE"
 #info "building conemu"
@@ -234,18 +209,16 @@ info "building gmake"
 build_gmake > "$LOG_FILE"
 info "building vim"
 build_vim > "$LOG_FILE"
-info "building pkg-config from w64devkit"
+info "building w64devkit additional tools"
 build_pkg_config > "$LOG_FILE"
-info "building vc++filt from w64devkit"
 build_vcppfilt > "$LOG_FILE"
-info "building debugbreak from w64devkit"
 build_debugbreak > "$LOG_FILE"
 info "building busybox alias from w64devkit"
 build_busybox_alias > "$LOG_FILE"
 #info "building x64dbg"
 #build_x64dbg
 [ "$BUILD_LLVM" = 1 ] && {
-  info "building llvm-mingw (takes a long time)"
+  info "building and installing llvm-mingw (takes a long time)"
   build_llvm > "$LOG_FILE"
 }
 
@@ -254,12 +227,8 @@ info "installing busybox-w32"
 install_busybox_w32 > "$LOG_FILE"
 info "installing libarchive"
 install_libarchive > "$LOG_FILE"
-info "installing libressl"
-install_libressl > "$LOG_FILE"
-info "installing curl"
-install_curl > "$LOG_FILE"
-info "installing ca certificates"
-install_ca_certs > "$LOG_FILE"
+info "installing aria2"
+install_aria2 > "$LOG_FILE"
 info "installing libgnurx"
 install_libgnurx > "$LOG_FILE"
 info "installing file"
@@ -276,11 +245,9 @@ info "installing gmake"
 install_gmake > "$LOG_FILE"
 info "installing vim"
 install_vim > "$LOG_FILE"
-info "installing pkg-config from w64devkit"
+info "installing w64devkit additional tools"
 install_pkg_config > "$LOG_FILE"
-info "installing vc++filt from w64devkit"
 install_vcppfilt > "$LOG_FILE"
-info "installing debugbreak from w64devkit"
 install_debugbreak > "$LOG_FILE"
 info "installing aliases to busybox"
 install_busybox_alias > "$LOG_FILE"

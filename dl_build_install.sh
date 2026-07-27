@@ -1,37 +1,54 @@
 #!/bin/sh
 
-NASM_URL="https://www.nasm.us/pub/nasm/stable/nasm-2.16.03.tar.xz"
-MAKE_URL="https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz"
-BUSYBOX_URL="https://github.com/rmyorston/busybox-w32/archive/refs/tags/FRP-5579-g5749feb35.tar.gz"
-VIM_URL="https://github.com/vim/vim/archive/v9.1.0821/vim-9.1.0821.tar.gz"
-FILE_URL="http://ftp.astron.com/pub/file/file-5.46.tar.gz"
-LIBARCHIVE_URL="https://www.libarchive.de/downloads/libarchive-3.7.4.tar.xz"
-CURL_URL="https://curl.se/download/curl-8.15.0.tar.xz"
-CACERTS_URL="https://curl.se/ca/cacert.pem"
-W64DEVKIT_URL="https://github.com/skeeto/w64devkit/archive/refs/tags/v2.4.0.tar.gz"
-PDCURSES_URL="https://github.com/wmcbrine/PDCurses/archive/refs/tags/3.9.tar.gz"
-# TODO add release on neptunium-base-files and use that instead of directly using the master branch
-NEPTUNIUM_BASE_URL="https://github.com/heliumhydride/neptunium-base-files/archive/refs/heads/master.tar.gz"
+generate_wget_list() {
+  # build the list of files to download
+  cp -v "$NP_BUILDDIR"/dl-lists/common.txt "$NP_BUILDDIR"/download/wget-list.txt
 
+  if [ "$BUILD_LLVM" = 1 ]; then
+    cat "$NP_BUILDDIR"/dl-lists/llvm-mingw-src.txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  else
+    cat "$NP_BUILDDIR"/dl-lists/llvm-mingw-bin-"$ARCH".txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  fi
 
-LIBRESSL_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-4.1.0.tar.gz"
-LIBGNURX_URL="https://downloads.sourceforge.net/mingw/Other/UserContributed/regex/mingw-regex-2.5.1/mingw-libgnurx-2.5.1-src.tar.gz"
+  if [ -z "$X64DBG_CUSTOM_PATH" ]; then
+    cat "$NP_BUILDDIR"/dl-lists/x64dbg-bin.txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  else
+    cp -v "$X64DBG_CUSTOM_PATH" "$NP_BUILDDIR"/download/x64dbg.zip || error "copying error"
+  fi
 
-DEPENDS_X86_URL="https://www.dependencywalker.com/depends22_x86.zip"
-DEPENDS_AMD64_URL="https://www.dependencywalker.com/depends22_x64.zip"
+  if [ -z "$CONEMU_CUSTOM_PATH" ]; then
+    cat "$NP_BUILDDIR"/dl-lists/conemu-bin.txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  else
+    cp -v "$CONEMU_CUSTOM_PATH" "$NP_BUILDDIR"/download/conemu.7z || error "copying error"
+  fi
 
-CONEMU_URL="https://github.com/Maximus5/ConEmu/releases/download/v23.07.24/ConEmuPack.230724.7z"
-X64DBG_URL="https://github.com/x64dbg/x64dbg/releases/download/2025.08.19/snapshot_2025-08-19_19-40.zip"
+  [ "$FREE_SOFTWARE_ONLY" = 1 ] || {
+    cat "$NP_BUILDDIR"/dl-lists/nonfree-"$ARCH".txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  }
+}
 
-LLVM_MINGW_SRC_URL="https://github.com/mstorsjo/llvm-mingw/archive/refs/tags/20250826.tar.gz"
-LLVM_MINGW_BIN_AMD64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-msvcrt-x86_64.zip"
-LLVM_MINGW_BIN_X86_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-msvcrt-i686.zip"
-LLVM_MINGW_BIN_ARM64_URL="https://github.com/mstorsjo/llvm-mingw/releases/download/20250826/llvm-mingw-20250826-ucrt-aarch64.zip"
+download_sources() {
+  generate_wget_list
+  cd "$NP_BUILDDIR"/download || error "directory error"
+  case "$DOWNLOAD_AGENT" in
+    aria2) aria2c -i wget-list.txt --auto-file-renaming=false -x "$DOWNLOAD_JOBS" || error "download failed";;
+    wget) if [ "$DOWNLOAD_JOBS" -le 1 ]; then
+            wget -i wget-list.txt || error "download failed"
+          else
+            (cat wget-list.txt | xargs -n 1 -P "$DOWNLOAD_JOBS" wget) || error "download failed"
+          fi
+    ;;
+    curl) if [ "$DOWNLOAD_JOBS" -le 1 ]; then
+            cat wget-list.txt | xargs curl -LJ --remote-name-all || error "download failed"
+          else
+            (cat wget-list.txt | xargs -n 1 -P "$DOWNLOAD_JOBS" curl -LJO) || error "download failed"
+          fi
+    ;;
+  esac
+}
 
 # neptunium base files
-download_neptunium_base() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$NEPTUNIUM_BASE_URL" || error "download error"
+extract_neptunium_base() {
   tar zxvf "$NP_BUILDDIR"/download/neptunium-base-files-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
   mv -v "$NP_BUILDDIR"/build/neptunium-base-files-* "$NP_BUILDDIR"/build/neptunium-base-files || error "extraction error"
 }
@@ -42,9 +59,7 @@ install_neptunium_base() {
 }
 
 # busybox-w32 (https://frippery.org/busybox-w32)
-download_busybox_w32() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$BUSYBOX_URL" || error "download error"
+extract_busybox_w32() {
   tar zxvf "$NP_BUILDDIR"/download/busybox-w32-FRP-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
   mv "$NP_BUILDDIR"/build/busybox-w32-FRP-* "$NP_BUILDDIR"/build/busybox-w32 || error "extraction error"
 }
@@ -84,9 +99,7 @@ install_busybox_w32() {
 }
 
 # libarchive (bsdcpio, bsdtar)
-download_libarchive() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$LIBARCHIVE_URL" || error "download error"
+extract_libarchive() {
   tar Jxvf "$NP_BUILDDIR"/download/libarchive-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
   mv -v "$NP_BUILDDIR"/build/libarchive-* "$NP_BUILDDIR"/build/libarchive || error "extraction error"
 }
@@ -104,82 +117,33 @@ install_libarchive() {
   mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdcpio.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cpio.exe || error "installation error"
 }
 
-# Libressl (required for Curl)
-download_libressl() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$LIBRESSL_URL" || error "download error"
-  tar zxvf "$NP_BUILDDIR"/download/libressl-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/libressl-* "$NP_BUILDDIR"/build/libressl || error "extraction error"
+# aria2
+extract_aria2() {
+  tar -Jxvf "$NP_BUILDDIR"/download/aria2-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/aria2* "$NP_BUILDDIR"/build/aria2 || error "extraction error"
 }
 
-build_host_libressl() {
-  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
-  ./configure --host="$TARGET_HOST" --prefix="$NP_BUILDDIR"/host --disable-nc || error "build error"
+build_aria2() {
+  cd "$NP_BUILDDIR"/build/aria2 || error "directory error"
+  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" \
+    --without-included-gettext --disable-nls --without-libcares \
+    --without-gnutls --without-openssl --without-sqlite3 \
+    --without-libxml2 --without-libexpat --without-libz \
+    --without-libgmp --without-libssh2 --without-libgcrypt \
+    --without-libnettle ARIA2_STATIC=yes  || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
 
-install_host_libressl() {
-  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
-  make install || error "installation error"
-}
-
-build_libressl() {
-  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
-  make distclean || error "build error" # we built host-libressl earlier, so we need to restart from zero to change the --prefix setting... this is why gnu autotools is absolute hot garbage
-  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --disable-nc || error "build error"
-  make -j"$BUILD_JOBS" || error "build error"
-}
-
-install_libressl() {
-  cd "$NP_BUILDDIR"/build/libressl || error "directory error"
-  make install DESTDIR="$NP_BUILDDIR"/install_dir || error "installation error"
-}
-
-# Curl
-download_curl() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$CURL_URL" || error "download error"
-  tar Jxvf "$NP_BUILDDIR"/download/curl-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/curl-* "$NP_BUILDDIR"/build/curl || error "extraction error"
-}
-
-build_curl() {
-  cd "$NP_BUILDDIR"/build/curl || error "directory error"
-  # TODO if we have problems with path in curl, fix prefix, includedir, libdir and add DESTDIR=... to 'make install'
-  ./configure --prefix="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX" \
-              --with-openssl="$NP_BUILDDIR"/host \
-              --enable-threaded-resolver \
-              --host="$TARGET_HOST" \
-              --includedir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/include \
-              --libdir="$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/lib \
-              --without-libpsl || error "build error"
-  make -j"$BUILD_JOBS" || error "build error"
-}
-
-install_curl() {
-  cd "$NP_BUILDDIR"/build/curl || error "directory error"
-  make install || error "installation error"
-  # curl runtime dll needs to be copied alongside curl.exe
-  cp -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/"$TARGET_HOST"/bin/libcurl-*.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
-}
-
-download_ca_certs() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$CACERTS_URL" || error "download error"
-}
-
-install_ca_certs() {
-  mkdir -pv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/etc/ssl/certs || error "installation error"
-  cp -v "$NP_BUILDDIR"/download/cacert.pem "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/curl-ca-bundle.crt || error "installation error"
+install_aria2() {
+  cd "$NP_BUILDDIR"/build/aria2 || error "directory error"
+  make install DESTDIR="$NP_BUILDDIR"/install_dir
 }
 
 # libgnurx (required for File)
-download_host_libgnurx() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$LIBGNURX_URL" || error "download error"
+extract_host_libgnurx() {
   # destdir patch from mingw-packages, should it be hardcoded like that ?
   # patch not needed because we install libgnurx manually, but keep it here just in case this changes in the near future
-  # $_dl_cmd https://raw.githubusercontent.com/msys2/MINGW-packages/refs/heads/master/mingw-w64-libgnurx/mingw-w64-libgnurx-honor-destdir.patch
+  # https://raw.githubusercontent.com/msys2/MINGW-packages/refs/heads/master/mingw-w64-libgnurx/mingw-w64-libgnurx-honor-destdir.patch
   tar zxvf "$NP_BUILDDIR"/download/mingw-libgnurx-* -C "$NP_BUILDDIR"/build/ || error "extraction error"
   mv -v "$NP_BUILDDIR"/build/mingw-libgnurx-* "$NP_BUILDDIR"/build/libgnurx || error "extraction error"
 }
@@ -211,9 +175,7 @@ install_libgnurx() {
 }
 
 # File
-download_file() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$FILE_URL" || error "download error"
+extract_file() {
   tar zxvf "$NP_BUILDDIR"/download/file-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
   mv -v "$NP_BUILDDIR"/build/file-* "$NP_BUILDDIR"/build/file || error "extraction error"
 }
@@ -248,14 +210,8 @@ install_file() {
 }
 
 # ConEmu
-download_conemu() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  if [ -n "$CONEMU_CUSTOM_PATH" ]; then # if we use custom conemu.7z
-    cp -v "$CONEMU_CUSTOM_PATH" "$NP_BUILDDIR"/download/conemu.7z || error "copying error"
-  else
-    $_dl_cmd "$CONEMU_URL" || error "download error"
-    mv -v "$NP_BUILDDIR"/download/ConEmuPack.*.7z "$NP_BUILDDIR"/download/conemu.7z || error "file error"
-  fi
+extract_conemu() {
+  [ -z "$CONEMU_CUSTOM_PATH" ] && (mv -v "$NP_BUILDDIR"/download/ConEmuPack.*.7z "$NP_BUILDDIR"/download/conemu.7z || error "file operation error")
   mkdir -v "$NP_BUILDDIR"/build/conemu || error "extraction error"
   7z x "$NP_BUILDDIR"/download/conemu.7z -o"$NP_BUILDDIR"/build/conemu/ || error "extraction error"
 }
@@ -271,20 +227,14 @@ install_conemu() {
 }
 
 # LLVM-MinGW (http://github.com/mstorsjo/llvm-mingw)
-download_llvm() {
+extract_llvm() {
   cd "$NP_BUILDDIR"/download || error "directory error"  
   if [ "$BUILD_LLVM" = 1 ]; then
-    $_dl_cmd "$LLVM_MINGW_SRC_URL" || error "download error"
     tar zxvf "$NP_BUILDDIR"/download/llvm-mingw-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
   else
-    case "$ARCH" in
-      amd64) $_dl_cmd "$LLVM_MINGW_BIN_AMD64_URL" || error "download error";;
-      x86) $_dl_cmd "$LLVM_MINGW_BIN_X86_URL" || error "download error";;
-      arm64) $_dl_cmd "$LLVM_MINGW_BIN_ARM64_URL" || error "download error";;
-    esac
     unzip -d "$NP_BUILDDIR"/build "$NP_BUILDDIR"/download/llvm-mingw-*.zip || error "extraction error"
   fi
-  mv -v "$NP_BUILDDIR"/build/llvm-mingw-* "$NP_BUILDDIR"/build/llvm-mingw || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/llvm-mingw-* "$NP_BUILDDIR"/build/llvm-mingw || error "file operation error"
 }
 
 build_llvm() {
@@ -298,11 +248,9 @@ install_llvm() {
 }
 
 # Netwide assembler
-download_nasm() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$NASM_URL" || error "download error"
+extract_nasm() {
   tar Jxvf "$NP_BUILDDIR"/download/nasm-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/nasm-* "$NP_BUILDDIR"/build/nasm || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/nasm-* "$NP_BUILDDIR"/build/nasm || error "file operation error"
 }
 
 build_nasm() {
@@ -317,11 +265,9 @@ install_nasm() {
 }
 
 # GNU Make
-download_gmake() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$MAKE_URL" || error "download error"
+extract_gmake() {
   tar zxvf "$NP_BUILDDIR"/download/make-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/make-* "$NP_BUILDDIR"/build/make || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/make-* "$NP_BUILDDIR"/build/make || error "file operation error"
 }
 
 build_gmake() {
@@ -336,11 +282,9 @@ install_gmake() {
 }
 
 # Vim
-download_vim() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$VIM_URL" || error "download error"
+extract_vim() {
   tar zxvf "$NP_BUILDDIR"/download/vim-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/vim-* "$NP_BUILDDIR"/build/vim || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/vim-* "$NP_BUILDDIR"/build/vim || error "file operation error"
 }
 
 build_vim() {
@@ -386,11 +330,9 @@ install_vim() {
 }
 
 # pkg-config, vc++filt, debugbreak, busybox aliases from w64devkit
-download_w64devkit() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$W64DEVKIT_URL" || error "download error"
+extract_w64devkit() {
   tar zxvf "$NP_BUILDDIR"/download/w64devkit-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/w64devkit-* "$NP_BUILDDIR"/build/w64devkit || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/w64devkit-* "$NP_BUILDDIR"/build/w64devkit || error "file operation error"
 }
 
 build_pkg_config() {
@@ -436,11 +378,9 @@ install_busybox_alias() {
 }
 
 # PDCurses
-download_pdcurses() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  $_dl_cmd "$PDCURSES_URL" || error "download error"
+extract_pdcurses() {
   tar zxvf "$NP_BUILDDIR"/download/PDCurses-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/PDCurses-* "$NP_BUILDDIR"/build/pdcurses || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/PDCurses-* "$NP_BUILDDIR"/build/pdcurses || error "file operation error"
 }
 
 build_pdcurses() {
@@ -485,14 +425,8 @@ install_pdcurses() {
 }
 
 # x64dbg
-download_x64dbg() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  if [ -n "$X64DBG_CUSTOM_PATH" ]; then # if we use custom x64dbg.zip
-    cp -v "$X64DBG_CUSTOM_PATH" "$NP_BUILDDIR"/download/x64dbg.zip || error "copying error"
-  else
-    $_dl_cmd "$X64DBG_URL" || error "download error"
-    mv -v "$NP_BUILDDIR"/download/snapshot_*.zip "$NP_BUILDDIR"/download/x64dbg.zip || error "file error"
-  fi
+extract_x64dbg() {
+  [ -z "$X64DBG_CUSTOM_PATH" ] && (mv -v "$NP_BUILDDIR"/download/snapshot_*.zip "$NP_BUILDDIR"/download/x64dbg.zip || error "file operation error")
   mkdir -v "$NP_BUILDDIR"/build/x64dbg || error "extraction error"
   unzip "$NP_BUILDDIR"/download/x64dbg.zip -d "$NP_BUILDDIR"/build/x64dbg/ || error "extraction error"
 }
@@ -503,14 +437,8 @@ install_x64dbg() {
 }
 
 # Dependency walker (depends.exe)
-download_depends() {
-  cd "$NP_BUILDDIR"/download || error "directory error"
-  if [ "$ARCH" = "x86" ]; then
-    $_dl_cmd "$DEPENDS_X86_URL" || error "download error"
-  else # this assumes arm64-x86_64 compatibility, and so assumes windows 11...
-    $_dl_cmd "$DEPENDS_AMD64_URL" || error "download error"
-  fi
-  mkdir -v "$NP_BUILDDIR"/build/depends || error "extraction error"
+extract_depends() {
+  mkdir -v "$NP_BUILDDIR"/build/depends || error "file operation error"
   unzip "$NP_BUILDDIR"/download/depends*.zip -d "$NP_BUILDDIR"/build/depends/ || error "extraction error"
 }
 
