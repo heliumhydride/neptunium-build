@@ -10,7 +10,6 @@ general code cleanup
 neptunium base files release
 self build reqs:
   git and 7zip (required by neptunium)
-  perl (required by curl)
   cmake and ninja (required by llvm)
 add cppcheck (+ patch from w64devkit maybe?)
 update download urls for packages:
