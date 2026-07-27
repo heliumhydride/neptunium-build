@@ -106,6 +106,7 @@ extract_libarchive() {
 
 build_libarchive() {
   cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
+  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
   ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --without-xml2 --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
@@ -125,6 +126,7 @@ extract_aria2() {
 
 build_aria2() {
   cd "$NP_BUILDDIR"/build/aria2 || error "directory error"
+  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
   ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" \
     --without-included-gettext --disable-nls --without-libcares \
     --without-gnutls --without-openssl --without-sqlite3 \
@@ -150,6 +152,8 @@ extract_host_libgnurx() {
 
 build_libgnurx() {
   cd "$NP_BUILDDIR"/build/libgnurx || error "directory error"
+  # if we're on neptunium, fix configure
+  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
   ./configure --prefix="$BUILD_PREFIX" --host="$TARGET_HOST" || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
@@ -184,6 +188,12 @@ build_file() {
   cd "$NP_BUILDDIR"/build/file || error "directory error"
   patch -Np0 < "$NP_BUILDDIR"/patches/00-file-cdf_ctime-fix.patch || error "patch error" # fixes build error with mingw64-gcc 14.2.0
   patch -Np0 < "$NP_BUILDDIR"/patches/01-file-fix-cross-compile.patch || error "patch error"
+  if [ "$(uname -s)" = "Windows_NT" ]; then
+    patch-configure
+    _cross_comp_flags=""
+  else
+    _cross_comp_flags="--build=x86_64-linux"
+  fi
   # TODO might affect self-building capabilities ? does file use this besides deciding wether cross-compiling is running or not ?
   CFLAGS="-I${NP_BUILDDIR}/host/include" \
   LDFLAGS="-L${NP_BUILDDIR}/host/lib" \
@@ -192,7 +202,7 @@ build_file() {
               --enable-shared \
               --libdir="$BUILD_PREFIX"/"$TARGET_HOST"/lib \
               --includedir="$BUILD_PREFIX"/"$TARGET_HOST"/include \
-              --build=x86_64-linux \
+              $_cross_comp_flags \
               --host="$TARGET_HOST" \
               --disable-zlib \
               --disable-bzlib \
@@ -255,6 +265,7 @@ extract_nasm() {
 
 build_nasm() {
   cd "$NP_BUILDDIR"/build/nasm || error "directory error"
+  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
   ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
@@ -272,6 +283,7 @@ extract_gmake() {
 
 build_gmake() {
   cd "$NP_BUILDDIR"/build/make || error "directory error"
+  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
   ./configure --disable-nls --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" || error "build error"
   make -j"$BUILD_JOBS" || error "build error"
 }
@@ -386,7 +398,6 @@ extract_pdcurses() {
 build_pdcurses() {
   cd "$NP_BUILDDIR"/build/pdcurses/wincon || error "directory error"
   make CC=${TARGET_HOST}-gcc \
-       LINK=${TARGET_HOST}-gcc \
        AR=${TARGET_HOST}-ar \
        STRIP=${TARGET_HOST}-strip \
        WINDRES=${TARGET_HOST}-windres \
