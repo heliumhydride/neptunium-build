@@ -130,23 +130,32 @@ esac
 check_installed "$_dl_cmd"
 
 echo
-echo "${ANSI_BLUE}arch:                   ${ANSI_GREEN}${ARCH}${ANSI_NORM}"
-echo "${ANSI_BLUE}download agent:         ${ANSI_GREEN}${DOWNLOAD_AGENT}${ANSI_NORM}"
+printf "${ANSI_BLUE}arch:                   ${ANSI_GREEN}${ARCH}${ANSI_NORM}\n"
+printf "${ANSI_BLUE}download agent:         ${ANSI_GREEN}${DOWNLOAD_AGENT}${ANSI_NORM}\n"
 
-if [ "$BUILD_LLVM" = 1 ]; then echo "${ANSI_BLUE}build llvm-mingw:       ${ANSI_GREEN}yes${ANSI_NORM}"
-else echo "${ANSI_BLUE}build llvm-mingw:       ${ANSI_RED}no${ANSI_NORM}"
+printf "${ANSI_BLUE}build llvm-mingw:       "
+if [ "$BUILD_LLVM" = 1 ]; then
+  printf "${ANSI_GREEN}yes${ANSI_NORM}\n"
+else
+  printf "${ANSI_RED}no${ANSI_NORM}\n"
 fi
 
-if [ "$FREE_SOFTWARE_ONLY" = 1 ]; then echo "${ANSI_BLUE}free software only:     ${ANSI_GREEN}yes${ANSI_NORM}"
-else echo "${ANSI_BLUE}free software only:     ${ANSI_RED}no${ANSI_NORM}"
+printf "${ANSI_BLUE}free software only:     "
+if [ "$FREE_SOFTWARE_ONLY" = 1 ]; then
+  printf "${ANSI_GREEN}yes${ANSI_NORM}\n"
+else
+  printf "${ANSI_RED}no${ANSI_NORM}\n"
 fi
 
-if [ "$NEW_USERLAND" = 1 ]; then echo "${ANSI_BLUE}userland:               ${ANSI_RED}zenithutils+mksh/win32${ANSI_NORM}"
-else echo "${ANSI_BLUE}userland:               ${ANSI_GREEN}busybox-w32${ANSI_NORM}"
+printf "${ANSI_BLUE}userland:               "
+if [ "$NEW_USERLAND" = 1 ]; then
+  printf "${ANSI_RED}zenithutils+mksh/win32${ANSI_NORM}\n"
+else
+  printf "${ANSI_GREEN}busybox-w32${ANSI_NORM}\n"
 fi
 
-[ -n "$X64DBG_CUSTOM_PATH" ] && echo "${ANSI_BLUE}x64dbg custom zip path: ${ANSI_GREEN}${X64DBG_CUSTOM_PATH}${ANSI_NORM}"
-[ -n "$CONEMU_CUSTOM_PATH" ] && echo "${ANSI_BLUE}conemu custom zip path: ${ANSI_GREEN}${CONEMU_CUSTOM_PATH}${ANSI_NORM}"
+[ -n "$X64DBG_CUSTOM_PATH" ] && printf "${ANSI_BLUE}x64dbg custom zip path: ${ANSI_GREEN}${X64DBG_CUSTOM_PATH}${ANSI_NORM}\n"
+[ -n "$CONEMU_CUSTOM_PATH" ] && printf "${ANSI_BLUE}conemu custom zip path: ${ANSI_GREEN}${CONEMU_CUSTOM_PATH}${ANSI_NORM}\n"
 
 echo "Proceed with these parameters ? (Y/n)"
 read -r _proceed
