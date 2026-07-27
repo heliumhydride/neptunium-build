@@ -182,6 +182,7 @@ extract_file > "$LOG_FILE"
 extract_llvm > "$LOG_FILE"
 extract_conemu > "$LOG_FILE"
 extract_x64dbg > "$LOG_FILE"
+extract_7zip > "$LOG_FILE"
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || (extract_depends > "$LOG_FILE")
 
 info "creating base directory structure"
@@ -218,6 +219,8 @@ info "building gmake"
 build_gmake > "$LOG_FILE"
 info "building vim"
 build_vim > "$LOG_FILE"
+info "building 7zip"
+build_7zip > "$LOG_FILE"
 info "building w64devkit additional tools"
 build_pkg_config > "$LOG_FILE"
 build_vcppfilt > "$LOG_FILE"
@@ -266,6 +269,8 @@ install_x64dbg > "$LOG_FILE"
   info "installing dependency walker"
   install_depends > "$LOG_FILE"
 }
+info "installing 7zip"
+install_7zip > "$LOG_FILE"
 info "installing neptunium-base-files"
 install_neptunium_base
 

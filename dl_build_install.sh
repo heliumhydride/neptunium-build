@@ -446,3 +446,25 @@ install_depends() {
   cp -v "$NP_BUILDDIR"/build/depends/depends.* "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
 }
 
+# 7-Zip
+extract_7zip() {
+  tar zxvf "$NP_BUILDDIR"/download/7zip-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/7zip-* "$NP_BUILDDIR"/build/7zip || error "file operation error"
+}
+
+build_7zip() {
+  cd "$NP_BUILDDIR"/build/7zip || error "directory error"
+
+  # if we're not cross compiling
+  [ "$(uname -s)" = "Windows_NT" ] || {
+    patch -p1 < "$NP_BUILDDIR"/patches/02-7zip_mingw_cross_compilation.patch || error "patching failed"
+    _7z_cross_flags="IS_MINGW_CROSS=1"
+  }
+
+  cd "$NP_BUILDDIR"/build/7zip/CPP/7zip/Bundles/Alone2 || error "directory error"
+  make -f makefile.gcc -j"$BUILD_JOBS" CC=${TARGET_HOST}-gcc CXX=${TARGET_HOST}-g++ RC=${TARGET_HOST}-windres $_7z_cross_flags || error "build error"
+}
+
+install_7zip() {
+  cp -v "$NP_BUILDDIR"/build/7zip/CPP/7zip/Bundles/Alone2/_o/7zz.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/7z.exe || error "installation error"
+}
