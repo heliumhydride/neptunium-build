@@ -8,9 +8,11 @@ ANSI_YELLOW="\033[1;33m"
 ANSI_BLUE="\033[1;34m"
 ANSI_NORM="\033[0m"
 
+_error_occured=0
+
 error() {
   printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1" >&2
-  [ "$_continue" = 1 ] || {
+  [ "$_continue" = 0 ] && {
     info "cleaning up files"
     cleanup_files
     exit 1
@@ -34,7 +36,6 @@ cleanup_files() {
   rm -fv .npts_*
 }
 
-# TODO if --continue is passed, ignore errors
 print_usage() {
   echo 'Neptunium test suite by helium hydride'
   echo 'usage: np_test_suite.sh [options]'
@@ -44,7 +45,7 @@ print_usage() {
 
 while :; do
   case "$1" in
-    -c|--clean) _continue=1;;
+    -c|--continue) _continue=1;;
     --) shift; break;;
     '') break;;
     *) print_usage;;
