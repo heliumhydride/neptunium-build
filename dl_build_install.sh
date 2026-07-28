@@ -326,6 +326,7 @@ install_vim() {
   # ---- install the required dlls
   # TODO vim arm64 support
   [ "$ARCH" = "amd64" ] && cp -v vim64.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
+  [ "$ARCH" = "arm64" ] && cp -v vim64.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/ # arm64 also has vim64.dll
   [ "$ARCH" = "x86" ] && cp -v vim32.dll "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/share/vim/
   if [ "$BUILD_WITH_CLANG" = 1 ]; then
     llvm_install_dir="$(${TARGET_HOST}-clang -v 2>&1|grep InstalledDir|cut -f2 -d' ')"/..
