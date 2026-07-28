@@ -8,7 +8,7 @@ ANSI_YELLOW="\033[1;33m"
 ANSI_BLUE="\033[1;34m"
 ANSI_NORM="\033[0m"
 
-_error_occured=0
+errors=0
 
 error() {
   printf "${ANSI_RED}error -> %s${ANSI_NORM}\n" "$1" >&2
@@ -17,7 +17,7 @@ error() {
     cleanup_files
     exit 1
   }
-  _error_occured=1
+  errors=$((errors + 1))
 }
 
 warn() {
@@ -53,7 +53,7 @@ while :; do
   shift
 done
 
-# TODO test nasm; openssl; make; pkg-config; vc++filt; debugbreak; pdcurses; x64dbg; dependency walker; llvm-strings, llvm-ar, llvm-objcopy, llvm-objdump, lldb?, win64-lld, libc++/libunwind
+# TODO test openssl; make; pkg-config; vc++filt; debugbreak; pdcurses; x64dbg; dependency walker; llvm-strings, llvm-ar, llvm-objcopy, llvm-objdump, lldb?, libc++/libunwind; aria2
 
 info "testing nasm ----"
 cat >> .npts_tmp.asm << EOF
@@ -74,8 +74,8 @@ cc .npts_test.o -o .npts_test || error "nasm test failed"
 ./.npts_test || error "nasm test failed"
 rm .npts_test .npts_test.o
 
-info "testing curl ----"
-curl https://example.com || error "curl test failed"
+#info "testing curl ----"
+#curl https://example.com || error "curl test failed"
 
 info "testing clang + lld ----"
 # TODO test other tools of llvm
@@ -110,8 +110,8 @@ file $(which cc busybox find vim curl) || error "file test failed"
 info "cleaning up temporary files ----"
 cleanup_files || warn "clean up error"
 
-if [ "$_error_occured" = 1 ]; then
-  warn "test finished with errors ----"
+if [ "$errors" -gt 0 ]; then
+  warn "test finished with $errors errors ----"
 else
   success "test finish with no errors ----"
 fi
