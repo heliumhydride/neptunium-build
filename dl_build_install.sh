@@ -363,7 +363,7 @@ install_debugbreak() {
 }
 
 install_busybox_alias() {
-  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync getopt grep groups gunzip gzip hd head hexdump httpd iconv id inotifyd install ipcalc jn kill killall lash less ln logname ls lsattr lzcat lzma lzop lzopcat md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tail tee test time timeout touch tr true truncate ts ttysize uname uncompress unexpand uniq unix2dos unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
+  for prog in arch ascii ash awk base32 base64 basename bash bc bunzip2 bzcat bzip2 cal cat cdrop chattr chmod cksum clear cmp comm cp cpio crc32 cut date dc dd df diff dirname dos2unix drop du echo ed egrep env expand expr factor false fgrep find fold free fsync getopt grep groups gunzip gzip hd head hexdump httpd iconv id inotifyd install ipcalc jn kill killall lash less ln logname ls lsattr lzcat lzma lzop lzopcat md5sum mkdir mktemp mv nc nl nproc od paste patch pdrop pgrep pidof pipe_progress pkill printenv printf ps pwd readlink realpath reset rev rm rmdir sed seq sh sha1sum sha256sum sha3sum sha512sum shred shuf sleep sort split ssl_client stat su sum sync tac tar tail tee test time timeout touch tr true truncate ts ttysize uname uncompress unexpand uniq unix2dos unlzma unlzop unxz unzip uptime usleep uudecode uuencode watch wc wget which whoami whois xargs xz xzcat yes zcat; do
     cp -v "$NP_BUILDDIR"/build/w64devkit/src/bbalias.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/"$prog".exe || error "installation error"
   done
 }
@@ -471,5 +471,8 @@ build_cppcheck() {
 }
 
 install_cppcheck() {
-  cp -v "$NP_BUILDDIR"/build/cppcheck/cppcheck.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck.exe
+  # needed because makefile tries to copy cppcheck, assumes no extension
+  cp cppcheck.exe cppcheck || erorr "file operation error"
+  make CXX=x86_64-w64-mingw32-g++ -j12 RDYNAMIC="" install DESTDIR="$NP_BUILDDIR"/install_dir FILESDIR=/share/cppcheck PREFIX=/"$BUILD_PREFIX"
+  mv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck.exe
 }
