@@ -48,7 +48,7 @@ print_usage() {
   echo "  -c, --clean: cleanup downloads, build files and output zips"
   echo "  -v, --verbose: output commands to stdout, not log file (overrides -o), equivalent to '-o /dev/stdout'"
   echo "  -o, --output-log [LOG_FILE]: output to log"
-  echo "  -z, --use-zenithutils-mksh: Use zenithutils+mksh/win32 as core userland instead of busybox-w32**"
+  echo "  -z, --use-zenithutils-mksh: Use zenithutils as core userland instead of busybox-w32**"
   echo "  --x64dbg [custom_zip]: Use a custom-built version of x64dbg (must be same directory structure as in the snapshots of x64dbg)"
   echo "  --conemu [custom_7z]: Use a custom-built version of conemu (must be same directory structure as in the ConEmuPack.*.7z)"
   echo "  --no-prebuilt-llvm: Build llvm-mingw instead of pulling a binary (VERY LONG!)"
@@ -57,7 +57,7 @@ print_usage() {
   echo ""
   echo "you can edit ${NP_BUILDDIR}dl_build_install.sh to change URLs of downloads, build flags, etc..."
   echo "*  arm64 building is very very experimental and prob wont work..."
-  echo "** zenithutils is a more complete, more BSD-like alternative to busybox/coreutils... intended to be mostly platform independent by design, but the default busybox is very much recommended as it is much more well tested than z.u."
+  echo "** zenithutils is a WIP, more BSD-like alternative to busybox/coreutils... intended to be mostly platform independent by design, but the default busybox is very much recommended as it is much more well tested and developped than zu"
   exit 1
 }
 
@@ -76,7 +76,7 @@ while :; do
     -o|--output-log) shift; LOG_FILE="$1";;
     -v|--verbose) VERBOSE=1; LOG_FILE="/dev/stdout";;
     -c|--clean) _clean_mode=1;;
-    -z|--use-zenithutils-mksh) NEW_USERLAND=1;;
+    -z|--use-zenithutils) USERLAND_ZU=1;;
     --) shift; break;;
     '') break;;
     *) print_usage;;
@@ -148,7 +148,7 @@ else
 fi
 
 printf "${ANSI_BLUE}userland:               "
-if [ "$NEW_USERLAND" = 1 ]; then
+if [ "$USERLAND_ZU" = 1 ]; then
   printf "${ANSI_RED}zenithutils+mksh/win32${ANSI_NORM}\n"
 else
   printf "${ANSI_GREEN}busybox-w32${ANSI_NORM}\n"
@@ -169,7 +169,11 @@ download_sources
 # base system tools
 info "extracting sources"
 extract_neptunium_base > "$LOG_FILE"
-extract_busybox_w32 > "$LOG_FILE"
+if [ "$USERLAND_ZU" = 1 ]; then
+  extract_zenithutils > "$LOG_FILE"
+else
+  extract_busybox_w32 > "$LOG_FILE"
+fi
 extract_aria2 > "$LOG_FILE"
 extract_nasm > "$LOG_FILE"
 extract_gmake > "$LOG_FILE"
@@ -203,8 +207,13 @@ info "installing host-libgnurx"
 install_host_libgnurx > "$LOG_FILE"
 
 # --- COMPILING NEPTUNUM DISTRIBUTION ---
-info "building busybox-w32"
-build_busybox_w32 > "$LOG_FILE"
+if [ "$USERLAND_ZU" = 1 ]; then
+  info "building zenithutils"
+  build_zenithutils > "$LOG_FILE"
+else
+  info "building busybox-w32"
+  build_busybox_w32 > "$LOG_FILE"
+fi
 info "building aria2"
 build_aria2 > "$LOG_FILE"
 info "building file"
@@ -235,8 +244,13 @@ build_busybox_alias > "$LOG_FILE"
 }
 
 # --- INSTALLING ---
-info "installing busybox-w32"
-install_busybox_w32 > "$LOG_FILE"
+if [ "$USERLAND_ZU" = 1 ]; then
+  info "installing zenithutils"
+  install_zenithutils
+else
+  info "installing busybox-w32"
+  install_busybox_w32 > "$LOG_FILE"
+fi
 info "installing aria2"
 install_aria2 > "$LOG_FILE"
 info "installing libgnurx"
@@ -277,7 +291,7 @@ install_neptunium_base > "$LOG_FILE"
 info "creating distribution zip"
 ZIPNAME="neptunium-$ARCH"
 [ "$FREE_SOFTWARE_ONLY" = 1 ] && ZIPNAME="${ZIPNAME}fre"
-[ "$NEW_USERLAND" = 1 ] && ZIPNAME="${ZIPNAME}zu"
+[ "$USERLAND_ZU" = 1 ] && ZIPNAME="${ZIPNAME}zu"
 ZIPNAME="${ZIPNAME}-$(date +%Y.%m.%d).7z"
 
 7z a -mx7 -r "$NP_BUILDDIR"/output/"$ZIPNAME" "$NP_BUILDDIR"/install_dir/* || error "creating distribution zip failed"

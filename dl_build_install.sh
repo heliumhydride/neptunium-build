@@ -25,6 +25,12 @@ generate_wget_list() {
   [ "$FREE_SOFTWARE_ONLY" = 1 ] || {
     cat "$NP_BUILDDIR"/dl-lists/nonfree-"$ARCH".txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
   }
+
+  if [ "$USERLAND_ZU" = 1 ]; then
+    cat "$NP_BUILDDIR"/dl-lists/userland-zu.txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  else
+    cat "$NP_BUILDDIR"/dl-lists/userland-busybox.txt | tee -a "$NP_BUILDDIR"/download/wget-list.txt
+  fi
 }
 
 download_sources() {
@@ -476,3 +482,23 @@ install_cppcheck() {
   make CXX=x86_64-w64-mingw32-g++ -j12 RDYNAMIC="" install DESTDIR="$NP_BUILDDIR"/install_dir FILESDIR=/share/cppcheck PREFIX=/"$BUILD_PREFIX"
   mv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck.exe
 }
+
+# zenithutils
+extract_zenithutils() {
+  tar zxvf "$NP_BUILDDIR"/download/zenithutils-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/zenithutils-* "$NP_BUILDDIR"/build/zenithutils || error "file operation error"
+}
+
+build_zenithutils() {
+  cd "$NP_BUILDDIR"/build/zenithutils || error "directory error"
+  make -j"$BUILD_JOBS" CC="${TARGET_HOST}-gcc" WIN32=1 || error "build error"
+}
+
+install_zenithutils() {
+  cd "$NP_BUILDDIR"/build/zenithutils || error "directory error"
+  make install \
+    CC="${TARGET_HOST}-gcc" WIN32=1 \
+    PREFIX=/"$BUILD_PREFIX" DESTDIR="$NP_BUILDDIR"/install_dir \
+    || error "installation error"
+}
+
