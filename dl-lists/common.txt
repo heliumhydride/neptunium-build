@@ -10,3 +10,4 @@ https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0.tar
 https://github.com/heliumhydride/neptunium-base-files/archive/refs/heads/master.tar.gz
 https://downloads.sourceforge.net/mingw/Other/UserContributed/regex/mingw-regex-2.5.1/mingw-libgnurx-2.5.1-src.tar.gz
 https://github.com/ip7z/7zip/archive/refs/tags/26.02.tar.gz
+https://github.com/cppcheck-opensource/cppcheck/archive/2.21.0.tar.gz

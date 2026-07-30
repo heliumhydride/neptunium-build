@@ -480,3 +480,18 @@ build_7zip() {
 install_7zip() {
   cp -v "$NP_BUILDDIR"/build/7zip/CPP/7zip/Bundles/Alone2/_o/7zz.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/7z.exe || error "installation error"
 }
+
+# Cppcheck
+extract_cppcheck() {
+  tar zxvf "$NP_BUILDDIR"/download/cppcheck-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/download/cppcheck-* "$NP_BUILDDIR"/download/cppcheck || error "file operation error"
+}
+
+build_cppcheck() {
+  cd "$NP_BUILDDIR"/build/cppcheck || error "directory error"
+  make -j"$BUILD_JOBS" CXX="${TARGET_HOST}-g++" RDYNAMIC="" || error "build error"
+}
+
+install_cppcheck() {
+  cp -v "$NP_BUILDDIR"/build/cppcheck/cppcheck.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck.exe
+}

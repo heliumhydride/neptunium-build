@@ -183,6 +183,7 @@ extract_llvm > "$LOG_FILE"
 extract_conemu > "$LOG_FILE"
 extract_x64dbg > "$LOG_FILE"
 extract_7zip > "$LOG_FILE"
+extract_cppcheck > "$LOG_FILE"
 [ "$FREE_SOFTWARE_ONLY" = 1 ] || (extract_depends > "$LOG_FILE")
 
 info "creating base directory structure"
@@ -221,6 +222,8 @@ info "building vim"
 build_vim > "$LOG_FILE"
 info "building 7zip"
 build_7zip > "$LOG_FILE"
+info "building cppcheck"
+build_cppcheck > "$LOG_FILE"
 info "building w64devkit additional tools"
 build_pkg_config > "$LOG_FILE"
 build_vcppfilt > "$LOG_FILE"
@@ -271,8 +274,10 @@ install_x64dbg > "$LOG_FILE"
 }
 info "installing 7zip"
 install_7zip > "$LOG_FILE"
+info "installing cppcheck"
+install_cppcheck > "$LOG_FILE"
 info "installing neptunium-base-files"
-install_neptunium_base
+install_neptunium_base > "$LOG_FILE"
 
 info "creating distribution zip"
 ZIPNAME="neptunium-$ARCH"
