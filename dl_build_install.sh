@@ -74,8 +74,6 @@ build_busybox_w32() {
   # patch config with sed, w64devkit style
   # do we keep 'man' on windows ? how do we configure it to use '/neptunium*/share/man/...' ?
   sed -ri 's/^(CONFIG_AR)=y/\1=n/' .config || error "build error"
-  sed -ri 's/^(CONFIG_TAR)=y/\1=n/' .config || error "build error"
-  sed -ri 's/^(CONFIG_CPIO)=y/\1=n/' .config || error "build error"
   sed -ri 's/^(CONFIG_DPKG\w*)=y/\1=n/' .config || error "build error"
   sed -ri 's/^(CONFIG_FTP\w*)=y/\1=n/' .config || error "build error"
   sed -ri 's/^(CONFIG_LINK)=y/\1=n/' .config || error "build error"
@@ -96,26 +94,6 @@ install_busybox_w32() {
   # busybox aliases installed from w64devkit busybox-alias.c
   cd "$NP_BUILDDIR"/build/busybox-w32 || error "directory error"
   cp busybox.exe -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/ || error "installation error"
-}
-
-# libarchive (bsdcpio, bsdtar)
-extract_libarchive() {
-  tar Jxvf "$NP_BUILDDIR"/download/libarchive-*.tar.xz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/build/libarchive-* "$NP_BUILDDIR"/build/libarchive || error "extraction error"
-}
-
-build_libarchive() {
-  cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
-  [ "$(uname -s)" = "Windows_NT" ] && patch-configure
-  ./configure --host="$TARGET_HOST" --prefix="$BUILD_PREFIX" --without-xml2 --disable-bsdcat --disable-bsdunzip --enable-bsdcpio --enable-bsdtar || error "build error"
-  make -j"$BUILD_JOBS" || error "build error"
-}
-
-install_libarchive() {
-  cd "$NP_BUILDDIR"/build/libarchive || error "directory error"
-  make install DESTDIR="$NP_BUILDDIR"/install_dir || error "installation error"
-  mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdtar.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/tar.exe || error "installation error"
-  mv -v "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/bsdcpio.exe "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cpio.exe || error "installation error"
 }
 
 # aria2
@@ -484,7 +462,7 @@ install_7zip() {
 # Cppcheck
 extract_cppcheck() {
   tar zxvf "$NP_BUILDDIR"/download/cppcheck-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
-  mv -v "$NP_BUILDDIR"/download/cppcheck-* "$NP_BUILDDIR"/download/cppcheck || error "file operation error"
+  mv -v "$NP_BUILDDIR"/build/cppcheck-* "$NP_BUILDDIR"/build/cppcheck || error "file operation error"
 }
 
 build_cppcheck() {
