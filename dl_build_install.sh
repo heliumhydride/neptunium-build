@@ -473,13 +473,14 @@ extract_cppcheck() {
 
 build_cppcheck() {
   cd "$NP_BUILDDIR"/build/cppcheck || error "directory error"
-  make -j"$BUILD_JOBS" CXX="${TARGET_HOST}-g++" RDYNAMIC="" || error "build error"
+  make -j"$BUILD_JOBS" CXX="${TARGET_HOST}-g++" RDYNAMIC="" FILESDIR="$BUILD_PREFIX"/share/cppcheck || error "build error"
 }
 
 install_cppcheck() {
   # needed because makefile tries to copy cppcheck, assumes no extension
-  cp cppcheck.exe cppcheck || erorr "file operation error"
-  make CXX=x86_64-w64-mingw32-g++ -j12 RDYNAMIC="" install DESTDIR="$NP_BUILDDIR"/install_dir FILESDIR=/share/cppcheck PREFIX=/"$BUILD_PREFIX"
+  cd "$NP_BUILDDIR"/build/cppcheck || error "directory error"
+  cp cppcheck.exe cppcheck || error "file operation error"
+  make CXX=x86_64-w64-mingw32-g++ -j"$BUILD_JOBS" RDYNAMIC="" install DESTDIR="$NP_BUILDDIR"/install_dir FILESDIR="$BUILD_PREFIX"/share/cppcheck PREFIX=/"$BUILD_PREFIX"
   mv "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck "$NP_BUILDDIR"/install_dir/"$BUILD_PREFIX"/bin/cppcheck.exe
 }
 
