@@ -492,7 +492,9 @@ extract_zenithutils() {
 
 build_zenithutils() {
   cd "$NP_BUILDDIR"/build/zenithutils || error "directory error"
-  make -j"$BUILD_JOBS" CC="${TARGET_HOST}-gcc" WIN32=1 || error "build error"
+  make -j"$BUILD_JOBS" CC="${TARGET_HOST}-gcc" WIN32=1 \
+  CFLAGS="-O2 -std=c99 -Wall -Wextra -Wpedantic -L\"$NP_BUILDDIR\"/host/lib -I\"$NP_BUILDDIR\"/host/include" \
+  || error "build error"
 }
 
 install_zenithutils() {
@@ -503,3 +505,31 @@ install_zenithutils() {
     || error "installation error"
 }
 
+# libsodium
+extract_libsodium() {
+  tar zxvf "$NP_BUILDDIR"/download/libsodium-*.tar.gz -C "$NP_BUILDDIR"/build || error "extraction error"
+  mv -v "$NP_BUILDDIR"/build/libsodium-* "$NP_BUILDDIR"/build/libsodium || error  "file operation error"
+  cp -rv "$NP_BUILDDIR"/build/libsodium "$NP_BUILDDIR"/build/host-libsodium || error "file operation error"
+}
+
+build_host_libsodium() {
+  cd "$NP_BUILDDIR"/build/host-libsodium || error "directory error"
+  ./configure --host=$TARGET_HOST --prefix="$NP_BUILDDIR"/host || error "build error"
+  make -j12 || error "build error"
+}
+
+install_host_libsodium() {
+  cd "$NP_BUILDDIR"/build/host-libsodium || error "directory error"
+  make install || error "installation error"
+}
+
+build_libsodium() {
+  cd "$NP_BUILDDIR"/build/libsodium || error "directory error"
+  ./configure --host=$TARGET_HOST --prefix="$BUILD_PREFIX" || error "build error"
+  make -j12 || error "build error"
+}
+
+install_libsodium() {
+  cd "$NP_BUILDDIR"/build/libsodium || error "directory error"
+  make install DESTDIR="$NP_BUILDDIR"/install_dir || error "installation error"
+}
